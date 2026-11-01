@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BarChart3, Bot, Briefcase, Palette, Plane, Shirt, Sparkles, Store } from "lucide-react";
+import { ArrowRight, BadgeEuro, BarChart3, Bot, Briefcase, Palette, Plane, Shirt, Sparkles, Store } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { getCurrentBusiness, profileCompleteness } from "@/lib/business";
 import { getQuota, type Quota } from "@/lib/quota";
@@ -41,6 +41,17 @@ const PILLARS: Pillar[] = [
     tagline: "Vos visuels, vidéos et contenus YouTube",
     icon: Palette,
     modules: [{ label: "Studio créatif", href: "/studio" }, { label: "Bibliothèque", href: "/bibliotheque" }, { label: "Studio vidéo" }, { label: "YouTube Studio" }],
+  },
+  {
+    name: "Ads",
+    tagline: "Vos publicités préparées par l'IA",
+    icon: BadgeEuro,
+    modules: [
+      { label: "Campagnes publicitaires", href: "/ads" },
+      { label: "Nouvelle publicité", href: "/ads/nouvelle" },
+      { label: "Lancement réel" },
+      { label: "Optimisation IA" },
+    ],
   },
   {
     name: "Fashion",

@@ -17,6 +17,8 @@ Le studio marketing IA des commerces de proximité : publications, visuels, vid�
 | Autopilot — étape 1 | Règles hebdo, créneaux de départ, calendrier jour/semaine/mois, programmées, historique, mode manuel | Fait |
 | Autopilot — étape 2 | Publication automatique via API officielles (Meta, TikTok, YouTube) | Après validation des plateformes |
 | Fashion AI | Photo produit, mannequin virtuel, Mon Avatar, Fashion Motion, Vinted Studio | À faire (fournisseurs à valider) |
+| Publia Ads — V1 | Assistant de campagne, Ads Factory (variantes IA), ciblage conforme, budget plafonné, prévisualisations, simulation identifiée | Fait |
+| Publia Ads — V2/V3 | Connexion Meta / TikTok / Google Ads, statistiques réelles, lancement après validation, tests A/B | Après accès officiels |
 | Intelligence | Analytics, recommandations | Plus tard |
 | Stripe | Free / Starter / Pro / Business, quotas | À faire |
 

@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import Link from "next/link";
-import { Download, Pencil, Trash2 } from "lucide-react";
+import { BadgeEuro, Download, Pencil, Trash2 } from "lucide-react";
 import { deleteCreation } from "../studio/actions";
 
 export type CreationItem = {
@@ -34,6 +34,9 @@ export function CreationCard({ c }: { c: CreationItem }) {
               <Download className="size-3.5" /> Télécharger
             </a>
           )}
+          <Link href={`/ads/nouvelle?creation=${c.id}`} className="btn-ghost px-2.5 py-1.5" aria-label="Utiliser dans une publicité" title="Utiliser dans une publicité">
+            <BadgeEuro className="size-3.5" />
+          </Link>
           <Link href={`/studio?creation=${c.id}`} className="btn-ghost px-2.5 py-1.5" aria-label="Réutiliser dans le Studio" title="Réutiliser">
             <Pencil className="size-3.5" />
           </Link>

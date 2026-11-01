@@ -19,6 +19,7 @@ import {
   Film,
   Tag,
   Megaphone,
+  BadgeEuro,
   Palette,
   Settings,
   Sparkles,
@@ -63,6 +64,10 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/youtube", label: "YouTube Studio", icon: SquarePlay, ready: false },
       { href: "/bibliotheque", label: "Bibliothèque", icon: FolderOpen, ready: true },
     ],
+  },
+  {
+    label: "Ads",
+    items: [{ href: "/ads", label: "Publia Ads", icon: BadgeEuro, ready: true }],
   },
   {
     label: "Fashion",

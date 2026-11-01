@@ -22,7 +22,7 @@ export async function getQuota(supabase: SupabaseClient, userId: string): Promis
       .from("usage_logs")
       .select("credits_used")
       .eq("user_id", userId)
-      .in("action", ["generate_post", "generate_youtube", "generate_campaign"])
+      .in("action", ["generate_post", "generate_youtube", "generate_campaign", "generate_ads"])
       .gte("created_at", monthStart.toISOString()),
     supabase.from("video_usage").select("credits_used").eq("user_id", userId).gte("created_at", monthStart.toISOString()),
     supabase.from("plan_limits").select("plan, name, monthly_generations, monthly_video_credits"),
