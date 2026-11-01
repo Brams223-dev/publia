@@ -14,6 +14,9 @@ import {
   Home,
   Inbox,
   MapPin,
+  Package,
+  Receipt,
+  ShoppingBag,
   Plane,
   Plug,
   Shirt,
@@ -72,6 +75,14 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: L.groups.ads,
     items: [{ href: "/ads", label: L.items.ads, icon: BadgeEuro, ready: true }],
+  },
+  {
+    label: L.groups.commerce,
+    items: [
+      { href: "/catalogue", label: L.items.catalog, icon: Package, ready: true },
+      { href: "/boutique", label: L.items.shop, icon: ShoppingBag, ready: true },
+      { href: "/commandes", label: L.items.orders, icon: Receipt, ready: false },
+    ],
   },
   {
     label: L.groups.fashion,

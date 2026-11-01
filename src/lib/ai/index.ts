@@ -11,6 +11,8 @@ export type StructuredRequest = {
   input: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  /** Images à analyser (URL HTTPS signées, courte durée). Optionnel. */
+  images?: string[];
   timeoutMs?: number;
 };
 

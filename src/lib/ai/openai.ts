@@ -24,12 +24,14 @@ export async function generateStructured<T>({
   input,
   schemaName,
   schema,
+  images = [],
   timeoutMs = 90_000,
 }: {
   instructions: string;
   input: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  images?: string[];
   timeoutMs?: number;
 }): Promise<{ data: T; model: string }> {
   if (!isAIConfigured()) throw new AIError("OPENAI_API_KEY manquante", "config");
@@ -42,7 +44,17 @@ export async function generateStructured<T>({
       body: JSON.stringify({
         model: OPENAI_MODEL,
         instructions,
-        input,
+        input: images.length
+          ? [
+              {
+                role: "user",
+                content: [
+                  { type: "input_text", text: input },
+                  ...images.slice(0, 4).map((url) => ({ type: "input_image", image_url: url, detail: "low" })),
+                ],
+              },
+            ]
+          : input,
         text: { format: { type: "json_schema", name: schemaName, schema, strict: true } },
       }),
       signal: AbortSignal.timeout(timeoutMs),

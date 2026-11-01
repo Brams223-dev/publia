@@ -19,6 +19,8 @@ Le studio marketing IA des commerces de proximité : publications, visuels, vid�
 | Fashion AI | Photo produit, mannequin virtuel, Mon Avatar, Fashion Motion, Vinted Studio | À faire (fournisseurs à valider) |
 | Publia Ads — V1 | Assistant de campagne, Ads Factory (variantes IA), ciblage conforme, budget plafonné, prévisualisations, simulation identifiée | Fait |
 | Publia Ads — V2/V3 | Connexion Meta / TikTok / Google Ads, statistiques réelles, lancement après validation, tests A/B | Après accès officiels |
+| Publia Commerce — catalogue universel | 26 catégories extensibles (en base), attributs dynamiques typés et validés, variantes et stocks (unité, poids, longueur, précommande, sur commande), types de vente, collections, recherche/filtres/tri, modèles de boutique par métier, assistant IA de fiche produit (déclaré / observé / suggéré), contrôles de conformité par pays (FR) | Fait |
+| Publia Commerce — vente en ligne | Vitrine publique, panier, paiement Stripe, commandes, livraison, téléchargements numériques, réservations | À venir |
 | Intelligence | Analytics, recommandations | Plus tard |
 | Stripe | Free / Starter / Pro / Business, quotas | À faire |
 
