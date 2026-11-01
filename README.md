@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Publia
 
-## Getting Started
+Le studio marketing IA des commerces de proximité : publications, visuels, vidéos et YouTube.
 
-First, run the development server:
+**Stack** : Next.js 16 (App Router, TypeScript, Tailwind 4) · Supabase (Auth, PostgreSQL, Storage) · Vercel.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## État d'avancement
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Phase | Contenu | État |
+| --- | --- | --- |
+| 1 | Fondations : landing, auth, navigation, tableau de bord, schéma Supabase | Fait |
+| 2 | Profil du commerce, logo, couleurs | À faire |
+| 3 | Génération de publications (OpenAI) | À faire |
+| 4 | Éditeur graphique, 12 modèles, export PNG | À faire |
+| 5 | Vidéos IA (fournisseur à valider), export MP4 | À faire |
+| 6 | YouTube Studio : Shorts, 16:9, miniatures 1280×720 | À faire |
+| 7 | Stripe : abonnements, packs vidéo, quotas | À faire |
+| 8 | Sécurité, tests, RGPD, déploiement | À faire |
+| 9 | Publication connectée (YouTube Data API v3, etc.) | Plus tard |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Les limites YouTube sont centralisées dans `src/lib/config/youtube.ts`, les formats dans `src/lib/config/platforms.ts`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Mise en route
 
-## Learn More
+1. **Supabase** : créer un projet (région UE), puis exécuter `supabase/migrations/20261101000001_init.sql`
+   dans *SQL Editor* (ou `supabase db push`).
+2. *Authentication → URL Configuration* : Site URL = l'URL Vercel, Redirect URLs = `https://<domaine>/auth/confirmation`.
+3. *Authentication → Email Templates* : dans « Confirm signup » et « Reset password », utiliser
+   `{{ .SiteURL }}/auth/confirmation?token_hash={{ .TokenHash }}&type=email&suite=/tableau-de-bord`
+   (pour la réinitialisation : `type=recovery&suite=/reinitialisation`).
+4. **Vercel** : importer le dépôt GitHub, ajouter les variables de `.env.example` (au minimum les deux `NEXT_PUBLIC_SUPABASE_*`).
+5. En local : `cp .env.example .env.local`, `npm install`, `npm run dev`.
 
-To learn more about Next.js, take a look at the following resources:
+## Règles du projet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Toute logique métier et toute clé secrète restent côté serveur.
+- RLS activé sur toutes les tables ; crédits, abonnements, jobs et jetons ne sont écrits que par le serveur.
+- Aucun résultat simulé : pas de fausse vidéo, de faux paiement ni de fausse publication.
+- Un administrateur s'ajoute uniquement en SQL : `insert into app_admins (user_id) values ('<uuid>');`
