@@ -1,55 +1,35 @@
-// Offres par défaut. Les valeurs définitives seront stockées en base (table plans)
-// et modifiables depuis l'administration (phase 7).
+// Présentation des offres sur la page publique.
+// La source de vérité des quotas est la table `plan_limits` (Supabase), modifiable par l'administration.
+// Prix et quotas à valider selon les coûts réels des API avant le lancement commercial.
 
-export type PlanId = "free" | "starter" | "premium";
+export type PlanId = "free" | "starter" | "pro" | "business";
 
-export type Plan = {
-  id: PlanId;
-  name: string;
-  priceLabel: string;
-  monthlyPosts: number;
-  monthlyVideoCredits: number;
-  features: string[];
-};
+export type Plan = { id: PlanId; name: string; priceLabel: string; highlight?: boolean; features: string[] };
 
 export const PLANS: Plan[] = [
   {
     id: "free",
-    name: "Gratuit",
+    name: "Free",
     priceLabel: "0 €",
-    monthlyPosts: 3,
-    monthlyVideoCredits: 0,
-    features: ["3 générations de publications", "Modèles de base", "Découverte de l'application"],
+    features: ["3 générations par mois", "Fais ma communication", "Profil de marque"],
   },
   {
     id: "starter",
     name: "Starter",
-    priceLabel: "19,90 € TTC / mois",
-    monthlyPosts: 30,
-    monthlyVideoCredits: 0,
-    features: [
-      "30 générations de publications par mois",
-      "Modèles graphiques et création de visuels",
-      "Historique des créations",
-      "Téléchargement PNG",
-      "1 commerce",
-    ],
+    priceLabel: "19,90 € / mois",
+    features: ["30 générations par mois", "Campagnes multi-réseaux", "Studio visuel et export PNG", "Historique des créations"],
   },
   {
-    id: "premium",
-    name: "Premium",
-    priceLabel: "39,90 € TTC / mois",
-    monthlyPosts: 60,
-    monthlyVideoCredits: 5,
-    features: [
-      "60 générations de publications par mois",
-      "5 crédits vidéo IA par mois",
-      "Tous les modèles",
-      "YouTube Shorts, vidéos 16:9 et miniatures",
-      "Historique complet",
-    ],
+    id: "pro",
+    name: "Pro",
+    priceLabel: "39,90 € / mois",
+    highlight: true,
+    features: ["60 générations par mois", "5 crédits vidéo par mois", "YouTube Studio et miniatures", "Assistant marketing"],
+  },
+  {
+    id: "business",
+    name: "Business",
+    priceLabel: "59,90 € / mois",
+    features: ["150 générations par mois", "15 crédits vidéo par mois", "Avis clients et visibilité locale", "Contacts, fidélité et mini-site"],
   },
 ];
-
-export const planById = (id: string | null | undefined): Plan =>
-  PLANS.find((p) => p.id === id) ?? PLANS[0];

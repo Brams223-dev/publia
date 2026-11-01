@@ -87,6 +87,51 @@ export function BusinessForm({ business, logoUrl }: { business: Business | null;
         </section>
 
         <section className="card space-y-4 p-5 sm:p-6">
+          <div>
+            <h2 className="font-semibold">Votre activité en détail</h2>
+            <p className="mt-1 text-sm text-ink-soft">Ces informations alimentent toutes les fonctions IA de Publia.</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="products" className="label">Produits phares</label>
+              <textarea id="products" name="products" rows={3} maxLength={2000} className="input resize-y" placeholder="Ex. : burgers maison, frites fraîches, desserts du jour" defaultValue={business?.products ?? ""} />
+            </div>
+            <div>
+              <label htmlFor="services" className="label">Services</label>
+              <textarea id="services" name="services" rows={3} maxLength={2000} className="input resize-y" placeholder="Ex. : sur place, à emporter, livraison, privatisation" defaultValue={business?.services ?? ""} />
+            </div>
+            <div>
+              <label htmlFor="target_audience" className="label">Clientèle visée</label>
+              <textarea id="target_audience" name="target_audience" rows={2} maxLength={1000} className="input resize-y" placeholder="Ex. : familles et salariés du quartier" defaultValue={business?.target_audience ?? ""} />
+            </div>
+            <div>
+              <label htmlFor="opening_hours" className="label">Horaires</label>
+              <textarea id="opening_hours" name="opening_hours" rows={2} maxLength={500} className="input resize-y" placeholder="Ex. : du mardi au samedi, 11 h 30 – 14 h 30 et 18 h 30 – 22 h" defaultValue={business?.opening_hours ?? ""} />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="goals" className="label">Vos objectifs</label>
+            <textarea id="goals" name="goals" rows={2} maxLength={1000} className="input resize-y" placeholder="Ex. : remplir le service du midi en semaine, faire connaître la livraison" defaultValue={business?.goals ?? ""} />
+          </div>
+          <div>
+            <p className="label">Réseaux sociaux</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(["instagram", "facebook", "tiktok", "youtube"] as const).map((n) => (
+                <input
+                  key={n}
+                  name={`social_${n}`}
+                  aria-label={n}
+                  maxLength={200}
+                  className="input"
+                  placeholder={{ instagram: "Instagram (@moncommerce)", facebook: "Page Facebook", tiktok: "TikTok (@moncommerce)", youtube: "Chaîne YouTube" }[n]}
+                  defaultValue={business?.social_links?.[n] ?? ""}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="card space-y-4 p-5 sm:p-6">
           <h2 className="font-semibold">Ton de communication *</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {TONES.map((t) => (

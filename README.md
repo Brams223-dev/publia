@@ -4,19 +4,21 @@ Le studio marketing IA des commerces de proximité : publications, visuels, vid�
 
 **Stack** : Next.js 16 (App Router, TypeScript, Tailwind 4) · Supabase (Auth, PostgreSQL, Storage) · Vercel.
 
-## État d'avancement
+## État d'avancement (Master Plan)
 
-| Phase | Contenu | État |
+| Étape | Contenu | État |
 | --- | --- | --- |
-| 1 | Fondations : landing, auth, navigation, tableau de bord, schéma Supabase | Fait |
-| 2 | Profil du commerce, logo, photos, couleurs, ton | Fait |
-| 3 | Génération de publications (OpenAI) | À faire |
-| 4 | Éditeur graphique, 12 modèles, export PNG | À faire |
-| 5 | Vidéos IA (fournisseur à valider), export MP4 | À faire |
-| 6 | YouTube Studio : Shorts, 16:9, miniatures 1280×720 | À faire |
-| 7 | Stripe : abonnements, packs vidéo, quotas | À faire |
-| 8 | Sécurité, tests, RGPD, déploiement | À faire |
-| 9 | Publication connectée (YouTube Data API v3, etc.) | Plus tard |
+| Fondations | Auth, profil intelligent du commerce, identité de marque, tableau de bord 4 piliers | Fait |
+| Fais ma communication | Campagne multi-réseaux générée par OpenAI, modifiable et validable | Fait (clés à configurer) |
+| Studio visuel + Bibliothèque | Modèles, export PNG/JPG | À faire |
+| Assistant marketing | Assistant conversationnel, calendrier, packs métier | À faire |
+| Vidéo + YouTube Studio | Fournisseur vidéo réel, Shorts, miniatures | À faire |
+| Business | Avis Google, visibilité locale, contacts, fidélité, mini-site | À faire |
+| Intelligence / Autopilot | Analytics, recommandations, publication après validation | Plus tard |
+| Stripe | Free / Starter / Pro / Business, quotas | À faire |
+
+Quotas : la table `plan_limits` est la source de vérité ; `consume_generation()` (service_role uniquement) réserve un crédit
+de façon atomique avant chaque génération, et `refund_generation()` le rend en cas d'échec.
 
 Les limites YouTube sont centralisées dans `src/lib/config/youtube.ts`, les formats dans `src/lib/config/platforms.ts`.
 

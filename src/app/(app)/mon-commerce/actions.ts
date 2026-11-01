@@ -36,6 +36,15 @@ const schema = z.object({
     }
   }),
   tone: z.enum(TONES.map((t) => t.id) as [string, ...string[]], { message: "Choisissez un ton." }),
+  products: optionalText(2000),
+  services: optionalText(2000),
+  target_audience: optionalText(1000),
+  opening_hours: optionalText(500),
+  goals: optionalText(1000),
+  social_instagram: optionalText(200),
+  social_facebook: optionalText(200),
+  social_tiktok: optionalText(200),
+  social_youtube: optionalText(200),
   primary: hex,
   secondary: hex,
   text: hex,
@@ -55,8 +64,11 @@ export async function saveBusiness(_: SaveState, formData: FormData): Promise<Sa
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user) return { error: "Votre session a expiré. Reconnectez-vous." };
 
-  const { primary, secondary, text, ...rest } = parsed.data;
-  const row = { ...rest, brand_colors: { primary, secondary, text } };
+  const { primary, secondary, text, social_instagram, social_facebook, social_tiktok, social_youtube, ...rest } = parsed.data;
+  const social_links = Object.fromEntries(
+    Object.entries({ instagram: social_instagram, facebook: social_facebook, tiktok: social_tiktok, youtube: social_youtube }).filter(([, v]) => v),
+  );
+  const row = { ...rest, social_links, brand_colors: { primary, secondary, text } };
 
   const { error } = business
     ? await supabase.from("businesses").update(row).eq("id", business.id).eq("owner_id", user.id)

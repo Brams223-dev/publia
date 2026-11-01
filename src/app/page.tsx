@@ -10,7 +10,7 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { icon: Sparkles, title: "Textes IA", text: "Titres, légendes, appels à l'action et hashtags adaptés à chaque réseau. Aucun prix ni horaire inventé." },
+  { icon: Sparkles, title: "Fais ma communication", text: "Choisissez un objectif : Publia prépare une campagne complète, textes, hashtags et calendrier. Aucun prix ni horaire inventé." },
   { icon: FileImage, title: "Visuels professionnels", text: "Modèles graphiques à vos couleurs, avec votre logo, exportés en PNG haute résolution." },
   { icon: Clapperboard, title: "Vidéos IA", text: "Transformez une photo en vidéo promotionnelle verticale, carrée ou paysage, en MP4." },
   { icon: SquarePlay, title: "YouTube Studio", text: "Shorts 9:16, vidéos 16:9, titres optimisés, descriptions, mots-clés et miniatures 1280 × 720." },
@@ -145,11 +145,11 @@ export default function Home() {
 
         <section id="tarifs" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6">
           <h2 className="text-3xl font-bold tracking-tight">Des tarifs simples, sans engagement</h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {PLANS.map((plan) => (
               <div
                 key={plan.id}
-                className={`card flex flex-col p-6 ${plan.id === "premium" ? "ring-2 ring-brand" : ""}`}
+                className={`card flex flex-col p-6 ${plan.highlight ? "ring-2 ring-brand" : ""}`}
               >
                 <p className="font-semibold">{plan.name}</p>
                 <p className="mt-2 text-2xl font-bold">{plan.priceLabel}</p>
@@ -160,7 +160,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/inscription" className={`mt-6 ${plan.id === "premium" ? "btn-primary" : "btn-ghost"}`}>
+                <Link href="/inscription" className={`mt-6 ${plan.highlight ? "btn-primary" : "btn-ghost"}`}>
                   Commencer
                 </Link>
               </div>
