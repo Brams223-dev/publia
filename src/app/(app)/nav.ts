@@ -1,4 +1,7 @@
 import type { LucideIcon } from "lucide-react";
+import { messages } from "@/i18n";
+
+const L = messages.nav;
 import {
   BarChart3,
   Bot,
@@ -30,76 +33,77 @@ import {
 } from "lucide-react";
 
 // `ready: false` → affiché comme « Bientôt », jamais comme un faux lien.
-export type NavItem = { href: string; label: string; icon: LucideIcon; ready: boolean; mobile?: boolean };
+// Libellés : src/i18n/messages (aucun texte d'interface en dur ici).
+export type NavItem = { href: string; label: string; icon: LucideIcon; ready: boolean; mobile?: string };
 export type NavGroup = { label: string | null; items: NavItem[] };
 
 export const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
     items: [
-      { href: "/tableau-de-bord", label: "Tableau de bord", icon: Home, ready: true, mobile: true },
-      { href: "/fais-ma-communication", label: "Fais ma communication", icon: Sparkles, ready: true, mobile: true },
+      { href: "/tableau-de-bord", label: L.items.dashboard, icon: Home, ready: true, mobile: L.mobile.dashboard },
+      { href: "/fais-ma-communication", label: L.items.doMyMarketing, icon: Sparkles, ready: true, mobile: L.mobile.doMyMarketing },
     ],
   },
   {
-    label: "Assistant",
+    label: L.groups.assistant,
     items: [
-      { href: "/campagnes", label: "Campagnes", icon: Megaphone, ready: true, mobile: true },
-      { href: "/assistant", label: "Assistant marketing", icon: Bot, ready: false },
+      { href: "/campagnes", label: L.items.campaigns, icon: Megaphone, ready: true, mobile: L.mobile.campaigns },
+      { href: "/assistant", label: L.items.assistant, icon: Bot, ready: false },
     ],
   },
   {
-    label: "Autopilot",
+    label: L.groups.autopilot,
     items: [
-      { href: "/autopilot", label: "Publia Autopilot", icon: Plane, ready: true },
-      { href: "/calendrier", label: "Calendrier de publication", icon: CalendarDays, ready: true, mobile: true },
-      { href: "/comptes-sociaux", label: "Comptes sociaux", icon: Plug, ready: true },
+      { href: "/autopilot", label: L.items.autopilot, icon: Plane, ready: true },
+      { href: "/calendrier", label: L.items.calendar, icon: CalendarDays, ready: true, mobile: L.mobile.calendar },
+      { href: "/comptes-sociaux", label: L.items.socialAccounts, icon: Plug, ready: true },
     ],
   },
   {
-    label: "Studio",
+    label: L.groups.studio,
     items: [
-      { href: "/studio", label: "Studio créatif", icon: Palette, ready: true },
-      { href: "/studio-video", label: "Studio vidéo", icon: Clapperboard, ready: false },
-      { href: "/youtube", label: "YouTube Studio", icon: SquarePlay, ready: false },
-      { href: "/bibliotheque", label: "Bibliothèque", icon: FolderOpen, ready: true },
+      { href: "/studio", label: L.items.studio, icon: Palette, ready: true },
+      { href: "/studio-video", label: L.items.videoStudio, icon: Clapperboard, ready: false },
+      { href: "/youtube", label: L.items.youtube, icon: SquarePlay, ready: false },
+      { href: "/bibliotheque", label: L.items.library, icon: FolderOpen, ready: true },
     ],
   },
   {
-    label: "Ads",
-    items: [{ href: "/ads", label: "Publia Ads", icon: BadgeEuro, ready: true }],
+    label: L.groups.ads,
+    items: [{ href: "/ads", label: L.items.ads, icon: BadgeEuro, ready: true }],
   },
   {
-    label: "Fashion",
+    label: L.groups.fashion,
     items: [
-      { href: "/fashion/photo-produit", label: "Photo produit", icon: ScanLine, ready: false },
-      { href: "/fashion/mannequin", label: "Mannequin virtuel", icon: Shirt, ready: false },
-      { href: "/fashion/avatar", label: "Mon Avatar", icon: UserRound, ready: false },
-      { href: "/fashion/motion", label: "Fashion Motion", icon: Film, ready: false },
-      { href: "/fashion/vinted", label: "Vinted Studio", icon: Tag, ready: false },
+      { href: "/fashion/photo-produit", label: L.items.fashionPhoto, icon: ScanLine, ready: false },
+      { href: "/fashion/mannequin", label: L.items.fashionModel, icon: Shirt, ready: false },
+      { href: "/fashion/avatar", label: L.items.fashionAvatar, icon: UserRound, ready: false },
+      { href: "/fashion/motion", label: L.items.fashionMotion, icon: Film, ready: false },
+      { href: "/fashion/vinted", label: L.items.fashionVinted, icon: Tag, ready: false },
     ],
   },
   {
-    label: "Business",
+    label: L.groups.business,
     items: [
-      { href: "/visibilite-locale", label: "Visibilité locale", icon: MapPin, ready: false },
-      { href: "/avis", label: "Avis clients", icon: Star, ready: false },
-      { href: "/contacts", label: "Contacts", icon: Users, ready: false },
-      { href: "/fidelite", label: "Fidélité", icon: Gift, ready: false },
-      { href: "/inbox", label: "Inbox", icon: Inbox, ready: false },
-      { href: "/mini-site", label: "Mini-site", icon: Globe, ready: false },
+      { href: "/visibilite-locale", label: L.items.localVisibility, icon: MapPin, ready: false },
+      { href: "/avis", label: L.items.reviews, icon: Star, ready: false },
+      { href: "/contacts", label: L.items.contacts, icon: Users, ready: false },
+      { href: "/fidelite", label: L.items.loyalty, icon: Gift, ready: false },
+      { href: "/inbox", label: L.items.inbox, icon: Inbox, ready: false },
+      { href: "/mini-site", label: L.items.miniSite, icon: Globe, ready: false },
     ],
   },
   {
-    label: "Intelligence",
-    items: [{ href: "/intelligence", label: "Performances", icon: BarChart3, ready: false }],
+    label: L.groups.intelligence,
+    items: [{ href: "/intelligence", label: L.items.performance, icon: BarChart3, ready: false }],
   },
   {
-    label: "Compte",
+    label: L.groups.account,
     items: [
-      { href: "/mon-commerce", label: "Mon commerce", icon: Store, ready: true, mobile: true },
-      { href: "/abonnement", label: "Abonnement", icon: CreditCard, ready: false },
-      { href: "/parametres", label: "Paramètres", icon: Settings, ready: false },
+      { href: "/mon-commerce", label: L.items.business, icon: Store, ready: true, mobile: L.mobile.business },
+      { href: "/abonnement", label: L.items.subscription, icon: CreditCard, ready: false },
+      { href: "/parametres", label: L.items.settings, icon: Settings, ready: false },
     ],
   },
 ];

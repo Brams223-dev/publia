@@ -2,7 +2,7 @@ import "server-only";
 // CreativeGenerator + AudienceRecommender : variantes publicitaires et ciblage conforme, via OpenAI.
 
 import { z } from "zod";
-import { generateStructured } from "@/lib/ai/openai";
+import { generateStructured } from "@/lib/ai";
 import type { Business } from "@/lib/business";
 import { AD_OBJECTIVES, platformById, type AdObjective, type AdPlatform } from "./config";
 

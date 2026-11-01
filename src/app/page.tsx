@@ -2,6 +2,12 @@ import Link from "next/link";
 import { Camera, Clapperboard, FileImage, MessageSquareText, Sparkles, Wand2, SquarePlay } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { PLANS } from "@/lib/config/plans";
+import { getPlanPrices } from "@/lib/pricing";
+import { formatMoney } from "@/lib/format";
+import { messages } from "@/i18n";
+
+// Prix relus depuis la base au plus toutes les heures.
+export const revalidate = 3600;
 
 const STEPS = [
   { icon: Camera, title: "Une photo", text: "Importez la photo de votre produit, de votre plat ou de votre réalisation." },
@@ -59,7 +65,9 @@ function PreviewCard() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const { market, prices } = await getPlanPrices();
+  const priceOf = (id: string) => prices.find((p) => p.plan === id);
   return (
     <div>
       <header className="sticky top-0 z-30 border-b border-line/70 bg-canvas/85 backdrop-blur">
@@ -152,7 +160,14 @@ export default function Home() {
                 className={`card flex flex-col p-6 ${plan.highlight ? "ring-2 ring-brand" : ""}`}
               >
                 <p className="font-semibold">{plan.name}</p>
-                <p className="mt-2 text-2xl font-bold">{plan.priceLabel}</p>
+                <p className="mt-2 text-2xl font-bold">
+                  {formatMoney(priceOf(plan.id)?.amountCents ?? 0, market)}
+                  {(priceOf(plan.id)?.amountCents ?? 0) > 0 && (
+                    <span className="text-sm font-medium text-ink-soft">
+                      {" "}{messages.common.perMonth}{market.tax.pricesIncludeTax ? ` ${messages.plans.taxIncluded}` : ""}
+                    </span>
+                  )}
+                </p>
                 <ul className="mt-5 flex-1 space-y-2 text-sm text-ink-soft">
                   {plan.features.map((f) => (
                     <li key={f} className="flex gap-2">
@@ -167,7 +182,7 @@ export default function Home() {
             ))}
           </div>
           <p className="mt-4 text-sm text-ink-soft">
-            Pack vidéo supplémentaire : 3 crédits pour 9,90 €. La génération vidéo n&apos;est jamais illimitée.
+            Pack vidéo supplémentaire : 3 crédits pour {formatMoney(990, market)}. La génération vidéo n&apos;est jamais illimitée.
           </p>
         </section>
 

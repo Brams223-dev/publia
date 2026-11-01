@@ -1,0 +1,90 @@
+// Messages de l'interface — français (langue active au lancement).
+// Pour ajouter une langue : copier ce fichier (ex. en.ts), traduire chaque valeur,
+// l'enregistrer dans src/i18n/index.ts, puis l'ajouter aux `locales` du marché concerné.
+// Les clés ne changent jamais : le code métier ne référence que les clés.
+
+export const fr = {
+  meta: {
+    title: "Publia — Le studio marketing IA des commerces de proximité",
+    description:
+      "Une photo, une idée, et Publia crée votre contenu marketing professionnel grâce à l'IA : publications, visuels, vidéos et YouTube.",
+  },
+  common: {
+    soon: "Bientôt",
+    signOut: "Se déconnecter",
+    save: "Enregistrer",
+    cancel: "Annuler",
+    delete: "Supprimer",
+    edit: "Modifier",
+    copy: "Copier",
+    copied: "Copié",
+    perMonth: "/ mois",
+    free: "Gratuit",
+  },
+  nav: {
+    groups: {
+      assistant: "Assistant",
+      autopilot: "Autopilot",
+      studio: "Studio",
+      ads: "Ads",
+      fashion: "Fashion",
+      business: "Business",
+      intelligence: "Intelligence",
+      account: "Compte",
+    },
+    items: {
+      dashboard: "Tableau de bord",
+      doMyMarketing: "Fais ma communication",
+      campaigns: "Campagnes",
+      assistant: "Assistant marketing",
+      autopilot: "Publia Autopilot",
+      calendar: "Calendrier de publication",
+      socialAccounts: "Comptes sociaux",
+      studio: "Studio créatif",
+      videoStudio: "Studio vidéo",
+      youtube: "YouTube Studio",
+      library: "Bibliothèque",
+      ads: "Publia Ads",
+      fashionPhoto: "Photo produit",
+      fashionModel: "Mannequin virtuel",
+      fashionAvatar: "Mon Avatar",
+      fashionMotion: "Fashion Motion",
+      fashionVinted: "Vinted Studio",
+      localVisibility: "Visibilité locale",
+      reviews: "Avis clients",
+      contacts: "Contacts",
+      loyalty: "Fidélité",
+      inbox: "Inbox",
+      miniSite: "Mini-site",
+      performance: "Performances",
+      business: "Mon commerce",
+      subscription: "Abonnement",
+      settings: "Paramètres",
+    },
+    mobile: {
+      dashboard: "Accueil",
+      doMyMarketing: "Créer",
+      campaigns: "Campagnes",
+      calendar: "Calendrier",
+      business: "Commerce",
+    },
+  },
+  plans: {
+    free: { name: "Free", features: ["3 générations par mois", "Fais ma communication", "Profil de marque"] },
+    starter: { name: "Starter", features: ["30 générations par mois", "Campagnes multi-réseaux", "Studio visuel et export PNG", "Historique des créations"] },
+    pro: { name: "Pro", features: ["60 générations par mois", "5 crédits vidéo par mois", "YouTube Studio et miniatures", "Assistant marketing"] },
+    business: { name: "Business", features: ["150 générations par mois", "15 crédits vidéo par mois", "Avis clients et visibilité locale", "Contacts, fidélité et mini-site"] },
+    taxIncluded: "TTC",
+  },
+  adStatus: {
+    draft: "Brouillon",
+    ready: "Prêt — non diffusé",
+    pending_launch: "En attente de lancement",
+    active: "Active",
+    paused: "En pause",
+    completed: "Terminée",
+    archived: "Archivée",
+  },
+};
+
+export type Messages = typeof fr;

@@ -1,6 +1,6 @@
 import "server-only";
 import { z } from "zod";
-import { generateStructured } from "@/lib/ai/openai";
+import { generateStructured } from "@/lib/ai";
 import type { Business } from "@/lib/business";
 import { FORMATS_BY_PLATFORM, LIMITS, OBJECTIVES, type CampaignPlatform, type ObjectiveId } from "./config";
 import { TONES } from "@/lib/config/business";

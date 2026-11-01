@@ -22,10 +22,15 @@ export type Business = {
   opening_hours: string | null;
   social_links: SocialLinks;
   goals: string | null;
+  /** Marché du commerce (src/config/markets.ts). */
+  country_code: string;
+  locale: string;
+  currency: string;
+  timezone: string;
 };
 
 const COLUMNS =
-  "id, name, category, description, address, city, phone, website, tone, brand_colors, logo_url, products, services, target_audience, opening_hours, social_links, goals";
+  "id, name, category, description, address, city, phone, website, tone, brand_colors, logo_url, products, services, target_audience, opening_hours, social_links, goals, country_code, locale, currency, timezone";
 
 /** Commerce principal de l'utilisateur connecté (V1 : un commerce par compte). */
 export async function getCurrentBusiness() {

@@ -1,3 +1,5 @@
+import { messages } from "@/i18n";
+
 // Publia Ads — configuration des plateformes (CampaignBuilder).
 // Objectifs alignés sur les types de campagnes réellement proposés par chaque régie.
 // Limites de texte : longueurs recommandées par les régies, appliquées par prudence.
@@ -73,12 +75,13 @@ export const AD_PLATFORMS: PlatformConfig[] = [
 
 export const platformById = (id: string) => AD_PLATFORMS.find((p) => p.id === id) ?? AD_PLATFORMS[0];
 
+const S = messages.adStatus;
 export const AD_STATUS: Record<string, { label: string; cls: string }> = {
-  draft: { label: "Brouillon", cls: "bg-amber-50 text-amber-800" },
-  ready: { label: "Prêt — non diffusé", cls: "bg-brand-soft text-brand" },
-  pending_launch: { label: "En attente de lancement", cls: "bg-brand-soft text-brand" },
-  active: { label: "Active", cls: "bg-success/10 text-success" },
-  paused: { label: "En pause", cls: "bg-neutral-100 text-neutral-700" },
-  completed: { label: "Terminée", cls: "bg-neutral-100 text-neutral-700" },
-  archived: { label: "Archivée", cls: "bg-neutral-100 text-neutral-500" },
+  draft: { label: S.draft, cls: "bg-amber-50 text-amber-800" },
+  ready: { label: S.ready, cls: "bg-brand-soft text-brand" },
+  pending_launch: { label: S.pending_launch, cls: "bg-brand-soft text-brand" },
+  active: { label: S.active, cls: "bg-success/10 text-success" },
+  paused: { label: S.paused, cls: "bg-neutral-100 text-neutral-700" },
+  completed: { label: S.completed, cls: "bg-neutral-100 text-neutral-700" },
+  archived: { label: S.archived, cls: "bg-neutral-100 text-neutral-500" },
 };

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { formatDay } from "@/lib/format";
 import Link from "next/link";
 import { Megaphone, Sparkles } from "lucide-react";
 import { getUser } from "@/lib/supabase/server";
@@ -6,8 +7,7 @@ import { OBJECTIVES } from "@/lib/campaigns/config";
 
 export const metadata: Metadata = { title: "Campagnes" };
 
-const shortDate = (iso: string) =>
-  new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
+const shortDate = (iso: string) => formatDay(iso, "short");
 
 export default async function CampaignsPage() {
   const { supabase, user } = await getUser();

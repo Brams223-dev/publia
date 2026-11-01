@@ -6,14 +6,7 @@ import { LogOut } from "lucide-react";
 import { NAV, NAV_GROUPS } from "./nav";
 import { Logo } from "@/components/logo";
 import { signOut } from "../(auth)/actions";
-
-const MOBILE_LABELS: Record<string, string> = {
-  "/tableau-de-bord": "Accueil",
-  "/fais-ma-communication": "Créer",
-  "/campagnes": "Campagnes",
-  "/calendrier": "Calendrier",
-  "/mon-commerce": "Commerce",
-};
+import { messages } from "@/i18n";
 
 export function Sidebar({ businessName }: { businessName: string | null }) {
   const pathname = usePathname();
@@ -53,7 +46,7 @@ export function Sidebar({ businessName }: { businessName: string | null }) {
                     >
                       <Icon className="size-4 shrink-0" /> <span className="truncate">{label}</span>
                       <span className="ml-auto shrink-0 rounded-full bg-canvas px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide">
-                        Bientôt
+                        {messages.common.soon}
                       </span>
                     </span>
                   ),
@@ -64,14 +57,14 @@ export function Sidebar({ businessName }: { businessName: string | null }) {
         </nav>
         <form action={signOut} className="border-t border-line p-4">
           <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-ink-soft hover:bg-canvas hover:text-ink">
-            <LogOut className="size-4" /> Se déconnecter
+            <LogOut className="size-4" /> {messages.common.signOut}
           </button>
         </form>
       </aside>
 
       {/* Mobile : barre du bas avec les rubriques disponibles */}
       <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-        {NAV.filter((n) => n.ready && n.mobile).map(({ href, icon: Icon }) => (
+        {NAV.filter((n) => n.ready && n.mobile).map(({ href, icon: Icon, mobile }) => (
           <Link
             key={href}
             href={href}
@@ -79,7 +72,7 @@ export function Sidebar({ businessName }: { businessName: string | null }) {
               isActive(href) ? "text-brand" : "text-ink-soft"
             }`}
           >
-            <Icon className="size-5" /> {MOBILE_LABELS[href]}
+            <Icon className="size-5" /> {mobile}
           </Link>
         ))}
       </nav>
@@ -88,7 +81,7 @@ export function Sidebar({ businessName }: { businessName: string | null }) {
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-white/90 px-4 py-3 backdrop-blur md:hidden">
         <Logo href="/tableau-de-bord" />
         <form action={signOut}>
-          <button aria-label="Se déconnecter" className="rounded-full p-2 text-ink-soft hover:bg-canvas">
+          <button aria-label={messages.common.signOut} className="rounded-full p-2 text-ink-soft hover:bg-canvas">
             <LogOut className="size-5" />
           </button>
         </form>

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
-import { AIError, isAIConfigured } from "@/lib/ai/openai";
+import { AIError, isAIConfigured } from "@/lib/ai";
 import { generateCampaign } from "@/lib/campaigns/generate";
 import { CAMPAIGN_PLATFORMS, LIMITS, OBJECTIVES } from "@/lib/campaigns/config";
 

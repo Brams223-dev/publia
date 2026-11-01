@@ -44,3 +44,21 @@ Les limites YouTube sont centralisées dans `src/lib/config/youtube.ts`, les for
 - RLS activé sur toutes les tables ; crédits, abonnements, jobs et jetons ne sont écrits que par le serveur.
 - Aucun résultat simulé : pas de fausse vidéo, de faux paiement ni de fausse publication.
 - Un administrateur s'ajoute uniquement en SQL : `insert into app_admins (user_id) values ('<uuid>');`
+
+## Internationalisation (préparée, France seule active)
+
+| Sujet | Où | Lancement |
+| --- | --- | --- |
+| Pays, langue, devise, fuseau, taxe, paiement, support | `src/config/markets.ts` (source unique) | France · fr · EUR · Europe/Paris |
+| Textes d'interface | `src/i18n/messages/<langue>.ts` + `t()` / `messages` | fr uniquement |
+| Formatage montants, nombres, dates | `src/lib/format.ts` (jamais de locale/devise en dur) | fr-FR / EUR |
+| Prix par marché et devise | table `plan_prices` (+ repli `src/config/pricing.ts`) | FR en EUR TTC |
+| Taxes par marché | table `tax_rates` | TVA 20 % |
+| Marché d'un commerce (locataire) | colonnes `businesses.country_code, locale, currency, timezone` | FR par défaut |
+| Fournisseur IA | `src/lib/ai` (`AI_PROVIDER`, OpenAI par défaut) | OpenAI |
+| Paiement | `src/lib/payments` (interface, une implémentation par fournisseur) | aucune active |
+| Multi-tenant | RLS Supabase par commerce (`owns_business`) sur toutes les tables exposées | actif |
+
+Activer un nouveau pays : suivre la liste de vérifications en tête de `src/config/markets.ts`
+(technique, commerciale, fiscale, réglementaire, traductions, prix et taxes en base) avant `active: true`.
+Les textes déjà migrés dans `src/i18n` : métadonnées, menu, statuts, offres ; les autres écrans suivent au fil des évolutions.

@@ -1,6 +1,9 @@
-// Outils de fuseau horaire sans dépendance (Intl), fuseau par défaut Europe/Paris.
+// Outils de fuseau horaire sans dépendance (Intl). Fuseau par défaut : celui du marché (config centrale).
 
-export const DEFAULT_TZ = "Europe/Paris";
+import { getMarket } from "@/config/markets";
+import { formatDay, formatInstant } from "@/lib/format";
+
+export const DEFAULT_TZ = getMarket().timezone;
 
 function parts(date: Date, tz: string) {
   const f = new Intl.DateTimeFormat("en-GB", {
@@ -63,16 +66,13 @@ export function startOfWeek(day: string) {
   return addDays(day, -wd);
 }
 
+// Raccourcis de formatage (délèguent au formatage centralisé du marché).
 export const fmt = {
-  time: (d: Date, tz = DEFAULT_TZ) => new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: tz }).format(d),
-  dayLong: (day: string) =>
-    new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`)),
-  dayShort: (day: string) =>
-    new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`)),
-  month: (day: string) =>
-    new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`)),
-  full: (d: Date, tz = DEFAULT_TZ) =>
-    new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: tz }).format(d),
+  time: (d: Date) => formatInstant(d, "time"),
+  dayLong: (day: string) => formatDay(day, "long"),
+  dayShort: (day: string) => formatDay(day, "weekdayShort"),
+  month: (day: string) => formatDay(day, "month"),
+  full: (d: Date) => formatInstant(d, "full"),
 };
 
 export const WEEKDAYS = [

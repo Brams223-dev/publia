@@ -7,11 +7,11 @@ import { OBJECTIVES } from "@/lib/campaigns/config";
 import { PostCard, type Post } from "./post-card";
 import { CampaignActions } from "./campaign-actions";
 import { fmt } from "@/lib/autopilot/time";
+import { formatDay } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Campagne" };
 
-const longDate = (iso: string) =>
-  new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
+const longDate = (iso: string) => formatDay(iso, "long");
 
 export default async function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
-import { AIError, isAIConfigured } from "@/lib/ai/openai";
+import { AIError, isAIConfigured } from "@/lib/ai";
 import { generateAdCreatives } from "@/lib/ads/generate";
 import { AD_OBJECTIVES, AD_PLATFORMS, platformById, type AdObjective, type AdPlatform } from "@/lib/ads/config";
 import { checkBudget } from "@/lib/ads/budget";

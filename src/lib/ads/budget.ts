@@ -1,3 +1,5 @@
+import { formatMoney } from "@/lib/format";
+
 // AdBudgetManager : contrôles de budget. Les dépenses sont facturées par les régies,
 // séparément de l'abonnement Publia. Aucun budget n'est engagé sans validation explicite.
 
@@ -40,5 +42,5 @@ export function checkBudget({
   return { ok: true, days, plannedCents };
 }
 
-export const euros = (cents: number) =>
-  new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", minimumFractionDigits: cents % 100 ? 2 : 0 }).format(cents / 100);
+/** Montant dans la devise du marché (euro pour la France). */
+export const euros = (cents: number) => formatMoney(cents);

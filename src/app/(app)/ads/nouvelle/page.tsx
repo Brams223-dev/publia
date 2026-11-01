@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getCurrentBusiness } from "@/lib/business";
 import { getQuota } from "@/lib/quota";
-import { isAIConfigured } from "@/lib/ai/openai";
+import { isAIConfigured } from "@/lib/ai";
 import { isAdminConfigured } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { AdWizard, type WizardCreation } from "./ad-wizard";

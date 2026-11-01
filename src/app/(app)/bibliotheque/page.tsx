@@ -4,12 +4,13 @@ import { FolderOpen, Palette } from "lucide-react";
 import { getCurrentBusiness } from "@/lib/business";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { STUDIO_FORMATS, formatById } from "@/lib/studio/formats";
+import { formatInstant } from "@/lib/format";
 import { CreationCard, type CreationItem } from "./creation-card";
 
 export const metadata: Metadata = { title: "Bibliothèque" };
 
 const TTL = 60 * 60;
-const dateFr = (iso: string) => new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
+const dateFr = (iso: string) => formatInstant(iso, "dayMonthYear");
 
 export default async function LibraryPage({ searchParams }: { searchParams: Promise<{ format?: string }> }) {
   if (!isSupabaseConfigured()) return null;
