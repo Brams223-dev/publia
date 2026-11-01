@@ -9,7 +9,7 @@ Le studio marketing IA des commerces de proximité : publications, visuels, vid�
 | Phase | Contenu | État |
 | --- | --- | --- |
 | 1 | Fondations : landing, auth, navigation, tableau de bord, schéma Supabase | Fait |
-| 2 | Profil du commerce, logo, couleurs | À faire |
+| 2 | Profil du commerce, logo, photos, couleurs, ton | Fait |
 | 3 | Génération de publications (OpenAI) | À faire |
 | 4 | Éditeur graphique, 12 modèles, export PNG | À faire |
 | 5 | Vidéos IA (fournisseur à valider), export MP4 | À faire |

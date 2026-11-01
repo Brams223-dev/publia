@@ -49,6 +49,21 @@ export function Sidebar({ businessName }: { businessName: string | null }) {
         </form>
       </aside>
 
+      {/* Mobile : barre du bas avec les rubriques disponibles */}
+      <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+        {NAV.filter((n) => n.ready).map(({ href, label, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium ${
+              pathname === href ? "text-brand" : "text-ink-soft"
+            }`}
+          >
+            <Icon className="size-5" /> {label}
+          </Link>
+        ))}
+      </nav>
+
       {/* Mobile : barre du haut */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-white/90 px-4 py-3 backdrop-blur md:hidden">
         <Logo href="/tableau-de-bord" />

@@ -25,7 +25,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="md:flex">
       <Sidebar businessName={businessName} />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-8 sm:py-10">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-28 sm:px-8 sm:py-10">
         <ConfigNotice />
         {children}
       </main>

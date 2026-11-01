@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Clapperboard, FileImage, PenSquare, Store, SquarePlay } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Clapperboard, FileImage, PenSquare, Store, SquarePlay } from "lucide-react";
 import { getUser } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { planById } from "@/lib/config/plans";
@@ -167,7 +168,16 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <SoonAction icon={Store} title="Mon commerce" text="Nom, secteur, logo, couleurs et ton de communication." phase={2} />
+        <Link href="/mon-commerce" className="card group flex items-start gap-4 p-5 transition hover:border-brand-light">
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand text-white">
+            <Store className="size-5" />
+          </span>
+          <div className="flex-1">
+            <p className="font-semibold">{d.businessName ? "Mon commerce" : "Renseigner mon commerce"}</p>
+            <p className="mt-0.5 text-sm text-ink-soft">Nom, secteur, logo, photos, couleurs et ton de communication.</p>
+          </div>
+          <ArrowRight className="mt-1 size-4 text-ink-soft transition group-hover:translate-x-0.5 group-hover:text-brand" />
+        </Link>
         <SoonAction icon={PenSquare} title="Créer une publication" text="Textes IA pour Instagram, TikTok, Facebook et YouTube." phase={3} />
         <SoonAction icon={FileImage} title="Modèles graphiques" text="12 modèles personnalisables, export PNG haute résolution." phase={4} />
         <SoonAction icon={Clapperboard} title="Créer une vidéo IA" text="Une photo devient une vidéo promotionnelle MP4." phase={5} />

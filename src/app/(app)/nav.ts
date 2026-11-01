@@ -6,7 +6,7 @@ export type NavItem = { href: string; label: string; icon: LucideIcon; ready: bo
 
 export const NAV: NavItem[] = [
   { href: "/tableau-de-bord", label: "Tableau de bord", icon: Home, ready: true },
-  { href: "/mon-commerce", label: "Mon commerce", icon: Store, ready: false, phase: 2 },
+  { href: "/mon-commerce", label: "Mon commerce", icon: Store, ready: true },
   { href: "/creer/publication", label: "Publication", icon: PenSquare, ready: false, phase: 3 },
   { href: "/creer/video", label: "Vidéo IA", icon: Clapperboard, ready: false, phase: 5 },
   { href: "/youtube", label: "YouTube Studio", icon: SquarePlay, ready: false, phase: 6 },
