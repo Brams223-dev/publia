@@ -6,8 +6,18 @@ const PROTECTED = ["/tableau-de-bord", "/mon-commerce", "/creations", "/abonneme
 const AUTH_PAGES = ["/connexion", "/inscription"];
 
 export async function proxy(request: NextRequest) {
+  if (!isSupabaseConfigured()) return NextResponse.next({ request });
+  try {
+    return await withSession(request);
+  } catch (error) {
+    // Ne jamais bloquer tout le site si Supabase est injoignable ou mal configuré.
+    console.error("[proxy] session Supabase indisponible :", error);
+    return NextResponse.next({ request });
+  }
+}
+
+async function withSession(request: NextRequest) {
   let response = NextResponse.next({ request });
-  if (!isSupabaseConfigured()) return response;
 
   const supabase = createServerClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
     cookies: {

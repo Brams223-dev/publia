@@ -1,12 +1,17 @@
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { supabaseConfigIssues } from "@/lib/supabase/env";
 
-/** Bandeau affiché tant que Supabase n'est pas branché : aucune fausse connexion. */
+/** Bandeau affiché tant que Supabase n'est pas correctement branché : aucune fausse connexion. */
 export function ConfigNotice() {
-  if (isSupabaseConfigured()) return null;
+  const issues = supabaseConfigIssues();
+  if (issues.length === 0) return null;
   return (
     <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-      Supabase n&apos;est pas encore configuré. Ajoutez <code className="font-mono">NEXT_PUBLIC_SUPABASE_URL</code> et{" "}
-      <code className="font-mono">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> dans Vercel pour activer les comptes.
+      <p className="font-semibold">Les comptes ne sont pas encore activés : configuration Supabase à corriger dans Vercel.</p>
+      <ul className="mt-1 list-disc pl-5">
+        {issues.map((i) => (
+          <li key={i}>{i}</li>
+        ))}
+      </ul>
     </div>
   );
 }
