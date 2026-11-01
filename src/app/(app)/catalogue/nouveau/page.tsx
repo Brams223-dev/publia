@@ -26,7 +26,7 @@ export default async function NewProductPage({ searchParams }: { searchParams: P
     );
 
   const [quota, categories, { data: shop }] = await Promise.all([
-    getQuota(supabase, user.id),
+    getQuota(supabase, business?.id),
     getCategories(supabase),
     supabase.from("shops").select("template").eq("business_id", business.id).maybeSingle(),
   ]);

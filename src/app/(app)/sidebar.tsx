@@ -7,8 +7,11 @@ import { NAV, NAV_GROUPS } from "./nav";
 import { Logo } from "@/components/logo";
 import { signOut } from "../(auth)/actions";
 import { messages } from "@/i18n";
+import { BusinessSwitcher } from "./business-switcher";
 
-export function Sidebar({ businessName }: { businessName: string | null }) {
+type Switcher = { currentId: string | null; businesses: { id: string; name: string; organization: string }[] };
+
+export function Sidebar({ switcher }: { switcher: Switcher }) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -18,7 +21,7 @@ export function Sidebar({ businessName }: { businessName: string | null }) {
       <aside className="sticky top-0 hidden h-dvh w-72 shrink-0 flex-col border-r border-line bg-white md:flex">
         <div className="px-6 pt-6">
           <Logo href="/tableau-de-bord" />
-          {businessName && <p className="mt-3 truncate text-sm text-ink-soft">{businessName}</p>}
+          <BusinessSwitcher {...switcher} />
         </div>
         <nav className="mt-4 flex-1 overflow-y-auto px-4 pb-4">
           {NAV_GROUPS.map((group, gi) => (
@@ -80,6 +83,9 @@ export function Sidebar({ businessName }: { businessName: string | null }) {
       {/* Mobile : barre du haut */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-white/90 px-4 py-3 backdrop-blur md:hidden">
         <Logo href="/tableau-de-bord" />
+        <div className="ml-auto mr-1 min-w-0">
+          <BusinessSwitcher {...switcher} compact />
+        </div>
         <form action={signOut}>
           <button aria-label={messages.common.signOut} className="rounded-full p-2 text-ink-soft hover:bg-canvas">
             <LogOut className="size-5" />

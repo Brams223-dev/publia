@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { reportError } from "@/lib/observability";
-import { getCurrentBusiness } from "@/lib/business";
+import { cookies } from "next/headers";
+import { CURRENT_BUSINESS_COOKIE, canManage, getCurrentBusiness } from "@/lib/business";
 import { SECTORS, TONES, MAX_PHOTOS } from "@/lib/config/business";
 
 export type SaveState = { error?: string; success?: string; fieldErrors?: Record<string, string> } | undefined;
@@ -62,8 +63,9 @@ export async function saveBusiness(_: SaveState, formData: FormData): Promise<Sa
     return { error: "Certains champs sont à corriger.", fieldErrors };
   }
 
-  const { supabase, user, business } = await getCurrentBusiness();
+  const { supabase, user, business, role } = await getCurrentBusiness();
   if (!user) return { error: "Votre session a expiré. Reconnectez-vous." };
+  if (business && !canManage(role)) return { error: READ_ONLY };
 
   const { primary, secondary, text, social_instagram, social_facebook, social_tiktok, social_youtube, ...rest } = parsed.data;
   const social_links = Object.fromEntries(
@@ -71,9 +73,31 @@ export async function saveBusiness(_: SaveState, formData: FormData): Promise<Sa
   );
   const row = { ...rest, social_links, brand_colors: { primary, secondary, text } };
 
-  const { error } = business
-    ? await supabase.from("businesses").update(row).eq("id", business.id).eq("owner_id", user.id)
-    : await supabase.from("businesses").insert({ ...row, owner_id: user.id });
+  let error: { message: string; code?: string } | null = null;
+  if (business) {
+    const res = await supabase.from("businesses").update(row).eq("id", business.id).select("id");
+    error = res.error ?? (res.data?.length ? null : { message: "aucune ligne modifiée" });
+  } else {
+    // Premier commerce : création de l'organisation dont l'utilisateur devient propriétaire.
+    const { data: managed } = await supabase
+      .from("organization_members")
+      .select("organization_id")
+      .eq("user_id", user.id)
+      .in("role", ["owner", "admin"])
+      .limit(1)
+      .maybeSingle();
+    let orgId: string | null = managed?.organization_id ?? null;
+    if (!orgId) {
+      const created = await supabase.rpc("create_organization", { p_name: row.name });
+      error = created.error;
+      orgId = created.data as string | null;
+    }
+    if (!error) {
+      const res = await supabase.from("businesses").insert({ ...row, owner_id: user.id, organization_id: orgId }).select("id").single();
+      error = res.error;
+      if (res.data) (await cookies()).set(CURRENT_BUSINESS_COOKIE, res.data.id, COOKIE_OPTIONS);
+    }
+  }
 
   if (error) {
     await reportError("action", "saveBusiness", error, { userId: user.id });
@@ -84,14 +108,18 @@ export async function saveBusiness(_: SaveState, formData: FormData): Promise<Sa
   return { success: business ? "Modifications enregistrées." : "Commerce créé. Vous pouvez maintenant ajouter votre logo et vos photos." };
 }
 
+const READ_ONLY = "Seuls le propriétaire et les administrateurs peuvent modifier les informations du commerce.";
+const COOKIE_OPTIONS = { httpOnly: true, sameSite: "lax" as const, secure: true, path: "/", maxAge: 60 * 60 * 24 * 365 };
+
 /** Vérifie qu'un chemin de stockage appartient bien au commerce de l'utilisateur. */
 function ownsPath(path: string, businessId: string) {
   return path.startsWith(`${businessId}/`) && !path.includes("..");
 }
 
 export async function setLogo(path: string): Promise<{ error?: string }> {
-  const { supabase, user, business } = await getCurrentBusiness();
+  const { supabase, user, business, role } = await getCurrentBusiness();
   if (!user || !business) return { error: "Commerce introuvable." };
+  if (!canManage(role)) return { error: READ_ONLY };
   if (!ownsPath(path, business.id)) return { error: "Fichier non autorisé." };
 
   const previous = business.logo_url;
@@ -104,8 +132,9 @@ export async function setLogo(path: string): Promise<{ error?: string }> {
 }
 
 export async function removeLogo(): Promise<{ error?: string }> {
-  const { supabase, user, business } = await getCurrentBusiness();
+  const { supabase, user, business, role } = await getCurrentBusiness();
   if (!user || !business) return { error: "Commerce introuvable." };
+  if (!canManage(role)) return { error: READ_ONLY };
   if (business.logo_url) await supabase.storage.from("brand-assets").remove([business.logo_url]);
   const { error } = await supabase.from("businesses").update({ logo_url: null }).eq("id", business.id);
   if (error) return { error: "Impossible de retirer le logo." };

@@ -4,6 +4,7 @@ import { messages } from "@/i18n";
 const L = messages.nav;
 import {
   BarChart3,
+  Building2,
   Bot,
   CalendarDays,
   Clapperboard,
@@ -113,6 +114,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: L.groups.account,
     items: [
       { href: "/mon-commerce", label: L.items.business, icon: Store, ready: true, mobile: L.mobile.business },
+      { href: "/organisation", label: L.items.organization, icon: Building2, ready: true },
       { href: "/abonnement", label: L.items.subscription, icon: CreditCard, ready: false },
       { href: "/parametres", label: L.items.settings, icon: Settings, ready: false },
     ],

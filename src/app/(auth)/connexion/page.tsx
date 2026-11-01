@@ -17,7 +17,7 @@ export default async function LoginPage({
       <LoginForm suite={suite} linkError={erreur === "lien"} />
       <p className="mt-6 text-center text-sm text-ink-soft">
         Pas encore de compte ?{" "}
-        <Link href="/inscription" className="font-semibold text-brand hover:underline">
+        <Link href={suite ? `/inscription?suite=${encodeURIComponent(suite)}` : "/inscription"} className="font-semibold text-brand hover:underline">
           Essayer gratuitement
         </Link>
       </p>

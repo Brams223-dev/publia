@@ -26,7 +26,7 @@ test("pipeline « Fais ma communication » avec réponse IA simulée (test uniqu
   try {
     const { generateCampaign } = await import("@/lib/campaigns/generate");
     const business = {
-      id: "b", name: "Chez Paul", category: "Restaurant", description: "Bistrot", address: null, city: "Lyon", phone: null, website: null,
+      id: "b", organization_id: "o", name: "Chez Paul", category: "Restaurant", description: "Bistrot", address: null, city: "Lyon", phone: null, website: null,
       tone: "chaleureux", brand_colors: { primary: "#000", secondary: "#000", text: "#000" }, logo_url: null, products: "Burgers", services: null,
       target_audience: null, opening_hours: null, social_links: {}, goals: null, country_code: "FR", locale: "fr", currency: "EUR", timezone: "Europe/Paris",
     } satisfies Business;

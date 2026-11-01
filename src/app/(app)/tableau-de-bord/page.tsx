@@ -81,7 +81,7 @@ async function load() {
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user) return null;
   const [quota, profile, campaigns] = await Promise.all([
-    getQuota(supabase, user.id),
+    getQuota(supabase, business?.id),
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
     business
       ? supabase

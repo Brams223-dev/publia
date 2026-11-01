@@ -60,17 +60,18 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
     });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
+  const next = safeNext(formData.get("suite"));
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.fullName },
-      emailRedirectTo: `${SITE_URL}/auth/confirmation?suite=/tableau-de-bord`,
+      emailRedirectTo: `${SITE_URL}/auth/confirmation?suite=${encodeURIComponent(next)}`,
     },
   });
   if (error) return { error: frenchAuthError(error.message) };
-  if (data.session) redirect("/tableau-de-bord");
+  if (data.session) redirect(next);
   return { success: "Compte créé. Un email de confirmation vient de vous être envoyé." };
 }
 

@@ -70,3 +70,11 @@ Les textes déjà migrés dans `src/i18n` : métadonnées, menu, statuts, offres
 - `npm test` : tests unitaires et tests des migrations SQL (Postgres embarqué, aucune connexion à la production).
 - `npm run check` : lint + types + tests. GitHub Actions lance aussi la compilation à chaque envoi sur `main`.
 - Les erreurs serveur, d'actions et du navigateur (utilisateurs connectés, 20 par heure maximum) sont enregistrées dans la table `app_errors` (Supabase), secrets masqués. Consultation : Supabase → Table Editor → `app_errors`.
+
+## Organisations et équipe
+
+- Une organisation regroupe un ou plusieurs commerces et des membres : propriétaire (tout), administrateur (commerces, réglages, invitations d'employés), employé (contenus, catalogue, publicités ; pas de réglages).
+- Limites par offre (table `plan_limits`, modifiables sans déploiement) : Free 1 commerce / 1 membre, Starter 1 / 2, Pro 3 / 5, Business 10 / 15.
+- Le quota de générations est partagé par toute l'organisation (offre du propriétaire, en attendant les abonnements Stripe).
+- Invitations par lien (7 jours, usage unique, réservé à l'adresse invitée ; seule l'empreinte du jeton est stockée). L'envoi par e-mail arrivera avec les notifications.
+- Le commerce actif est mémorisé dans un cookie ; l'accès reste vérifié par la RLS.

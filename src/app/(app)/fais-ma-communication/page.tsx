@@ -17,7 +17,7 @@ export default async function DoMyMarketingPage() {
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user) return null;
 
-  const quota = await getQuota(supabase, user.id);
+  const quota = await getQuota(supabase, business?.id);
   const remaining = Math.max(0, quota.generationsQuota - quota.generationsUsed);
   const serverReady = isAIConfigured() && isAdminConfigured();
   const completeness = profileCompleteness(business);

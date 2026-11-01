@@ -62,6 +62,7 @@ export const fr = {
       miniSite: "Mini-site",
       performance: "Performances",
       business: "Mon commerce",
+      organization: "Organisation et équipe",
       subscription: "Abonnement",
       settings: "Paramètres",
     },

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getCurrentBusiness } from "@/lib/business";
+import { canManage, getCurrentBusiness } from "@/lib/business";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { BusinessForm } from "./business-form";
 import { BrandMedia } from "./brand-media";
@@ -10,7 +10,8 @@ const SIGNED_URL_TTL = 60 * 60; // 1 h
 
 export default async function MyBusinessPage() {
   if (!isSupabaseConfigured()) return null;
-  const { supabase, business } = await getCurrentBusiness();
+  const { supabase, business, role } = await getCurrentBusiness();
+  const editable = !business || canManage(role);
 
   let logoUrl: string | null = null;
   let photos: { id: string; url: string | null }[] = [];
@@ -43,10 +44,21 @@ export default async function MyBusinessPage() {
         </p>
       </header>
 
-      <BusinessForm business={business} logoUrl={logoUrl} />
+      {!editable ? (
+        <p className="rounded-2xl border border-line bg-white px-4 py-3 text-sm text-ink-soft">
+          <span className="font-semibold text-ink">Lecture seule : </span>seuls le propriétaire et les administrateurs de
+          l&apos;organisation peuvent modifier ces informations.
+        </p>
+      ) : null}
+
+      <fieldset disabled={!editable} className="min-w-0 space-y-6">
+        <BusinessForm business={business} logoUrl={logoUrl} />
+      </fieldset>
 
       {business ? (
-        <BrandMedia businessId={business.id} logoUrl={logoUrl} photos={photos} />
+        <fieldset disabled={!editable} className="min-w-0">
+          <BrandMedia businessId={business.id} logoUrl={logoUrl} photos={photos} />
+        </fieldset>
       ) : (
         <p className="card p-5 text-sm text-ink-soft">
           Enregistrez d&apos;abord votre commerce pour pouvoir importer votre logo et vos photos.

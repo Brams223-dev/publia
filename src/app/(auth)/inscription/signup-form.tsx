@@ -5,11 +5,12 @@ import Link from "next/link";
 import { signUp } from "../actions";
 import { Field, FormMessage, SubmitButton } from "../form-ui";
 
-export function SignupForm() {
+export function SignupForm({ suite }: { suite?: string }) {
   const [state, action] = useActionState(signUp, undefined);
   if (state?.success) return <FormMessage state={state} />;
   return (
     <form action={action} className="space-y-4">
+      <input type="hidden" name="suite" value={suite ?? ""} />
       <Field label="Votre nom" name="fullName" autoComplete="name" required />
       <Field label="Email" name="email" type="email" autoComplete="email" required />
       <Field

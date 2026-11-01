@@ -24,7 +24,7 @@ export default async function NewAdPage({ searchParams }: { searchParams: Promis
     );
 
   const [quota, { data: rows }] = await Promise.all([
-    getQuota(supabase, user.id),
+    getQuota(supabase, business?.id),
     supabase.from("creations").select("id, title, file_path").eq("business_id", business.id).order("created_at", { ascending: false }).limit(24),
   ]);
   let creations: WizardCreation[] = [];
