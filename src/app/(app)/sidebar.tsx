@@ -11,6 +11,7 @@ const MOBILE_LABELS: Record<string, string> = {
   "/tableau-de-bord": "Accueil",
   "/fais-ma-communication": "Créer",
   "/campagnes": "Campagnes",
+  "/calendrier": "Calendrier",
   "/mon-commerce": "Commerce",
 };
 

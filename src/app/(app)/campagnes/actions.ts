@@ -43,8 +43,13 @@ export async function setPostStatus(id: string, status: "draft" | "ready"): Prom
   if (!z.string().uuid().safeParse(id).success) return { error: "Contenu introuvable." };
   const { supabase, user } = await getUser();
   if (!user) return { error: "Session expirée." };
-  const { data, error } = await supabase.from("posts").update({ status }).eq("id", id).select("campaign_id").maybeSingle();
-  if (error || !data) return { error: "Mise à jour impossible." };
+  // Un contenu repassé en relecture est retiré du calendrier (sauf s'il est déjà publié).
+  const patch =
+    status === "draft" ? { status, publish_status: "unscheduled", scheduled_at: null } : { status };
+  let query = supabase.from("posts").update(patch).eq("id", id);
+  if (status === "draft") query = query.neq("publish_status", "published");
+  const { data, error } = await query.select("campaign_id").maybeSingle();
+  if (error || !data) return { error: "Mise à jour impossible (un contenu déjà publié ne peut pas repasser en relecture)." };
   revalidatePath(`/campagnes/${data.campaign_id}`);
   return {};
 }

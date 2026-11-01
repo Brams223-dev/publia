@@ -11,6 +11,13 @@ import {
   Home,
   Inbox,
   MapPin,
+  Plane,
+  Plug,
+  Shirt,
+  ScanLine,
+  UserRound,
+  Film,
+  Tag,
   Megaphone,
   Palette,
   Settings,
@@ -38,7 +45,14 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/campagnes", label: "Campagnes", icon: Megaphone, ready: true, mobile: true },
       { href: "/assistant", label: "Assistant marketing", icon: Bot, ready: false },
-      { href: "/calendrier", label: "Calendrier", icon: CalendarDays, ready: false },
+    ],
+  },
+  {
+    label: "Autopilot",
+    items: [
+      { href: "/autopilot", label: "Publia Autopilot", icon: Plane, ready: true },
+      { href: "/calendrier", label: "Calendrier de publication", icon: CalendarDays, ready: true, mobile: true },
+      { href: "/comptes-sociaux", label: "Comptes sociaux", icon: Plug, ready: true },
     ],
   },
   {
@@ -48,6 +62,16 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/studio-video", label: "Studio vidéo", icon: Clapperboard, ready: false },
       { href: "/youtube", label: "YouTube Studio", icon: SquarePlay, ready: false },
       { href: "/bibliotheque", label: "Bibliothèque", icon: FolderOpen, ready: false },
+    ],
+  },
+  {
+    label: "Fashion",
+    items: [
+      { href: "/fashion/photo-produit", label: "Photo produit", icon: ScanLine, ready: false },
+      { href: "/fashion/mannequin", label: "Mannequin virtuel", icon: Shirt, ready: false },
+      { href: "/fashion/avatar", label: "Mon Avatar", icon: UserRound, ready: false },
+      { href: "/fashion/motion", label: "Fashion Motion", icon: Film, ready: false },
+      { href: "/fashion/vinted", label: "Vinted Studio", icon: Tag, ready: false },
     ],
   },
   {

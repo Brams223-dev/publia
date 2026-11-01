@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BarChart3, Bot, Briefcase, Palette, Sparkles, Store } from "lucide-react";
+import { ArrowRight, BarChart3, Bot, Briefcase, Palette, Plane, Shirt, Sparkles, Store } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { getCurrentBusiness, profileCompleteness } from "@/lib/business";
 import { getQuota, type Quota } from "@/lib/quota";
@@ -26,10 +26,27 @@ const PILLARS: Pillar[] = [
     ],
   },
   {
+    name: "Autopilot",
+    tagline: "Programmez à l'avance, publiez au bon moment",
+    icon: Plane,
+    modules: [
+      { label: "Réglages et créneaux", href: "/autopilot" },
+      { label: "Calendrier", href: "/calendrier" },
+      { label: "Comptes sociaux", href: "/comptes-sociaux" },
+      { label: "Publication automatique" },
+    ],
+  },
+  {
     name: "Studio",
     tagline: "Vos visuels, vidéos et contenus YouTube",
     icon: Palette,
     modules: [{ label: "Studio créatif" }, { label: "Studio vidéo" }, { label: "YouTube Studio" }, { label: "Bibliothèque" }],
+  },
+  {
+    name: "Fashion",
+    tagline: "Photos de mode, mannequins virtuels et ventes",
+    icon: Shirt,
+    modules: [{ label: "Photo produit" }, { label: "Mannequin virtuel" }, { label: "Mon Avatar" }, { label: "Fashion Motion" }, { label: "Vinted Studio" }],
   },
   {
     name: "Business",

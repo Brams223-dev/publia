@@ -14,7 +14,10 @@ Le studio marketing IA des commerces de proximité : publications, visuels, vid�
 | Assistant marketing | Assistant conversationnel, calendrier, packs métier | À faire |
 | Vidéo + YouTube Studio | Fournisseur vidéo réel, Shorts, miniatures | À faire |
 | Business | Avis Google, visibilité locale, contacts, fidélité, mini-site | À faire |
-| Intelligence / Autopilot | Analytics, recommandations, publication après validation | Plus tard |
+| Autopilot — étape 1 | Règles hebdo, créneaux de départ, calendrier jour/semaine/mois, programmées, historique, mode manuel | Fait |
+| Autopilot — étape 2 | Publication automatique via API officielles (Meta, TikTok, YouTube) | Après validation des plateformes |
+| Fashion AI | Photo produit, mannequin virtuel, Mon Avatar, Fashion Motion, Vinted Studio | À faire (fournisseurs à valider) |
+| Intelligence | Analytics, recommandations | Plus tard |
 | Stripe | Free / Starter / Pro / Business, quotas | À faire |
 
 Quotas : la table `plan_limits` est la source de vérité ; `consume_generation()` (service_role uniquement) réserve un crédit

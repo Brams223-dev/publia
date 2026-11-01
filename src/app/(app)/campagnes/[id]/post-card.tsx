@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Copy, Lightbulb, Pencil, RotateCcw } from "lucide-react";
+import { CalendarClock, Check, Copy, Lightbulb, Pencil, RotateCcw } from "lucide-react";
 import { setPostStatus, updatePost } from "../actions";
+import { schedulePost } from "../../autopilot/actions";
 import { FORMAT_LABELS } from "@/lib/campaigns/config";
 import { PLATFORM_LABELS, type Platform } from "@/lib/config/platforms";
 
@@ -17,6 +18,9 @@ export type Post = {
   hashtags: string[];
   visual_idea: string | null;
   status: string;
+  publish_status: string;
+  scheduled_label: string | null;
+  scheduled_for: string;
 };
 
 const PLATFORM_STYLE: Record<Platform, string> = {
@@ -61,6 +65,17 @@ export function PostCard({ post }: { post: Post }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const ready = post.status === "ready";
+  const [scheduling, setScheduling] = useState(false);
+  const [when, setWhen] = useState({ day: post.scheduled_for, time: "18:30" });
+
+  function doSchedule() {
+    setError(null);
+    start(async () => {
+      const res = await schedulePost(post.id, when.day, when.time);
+      if (res.error) setError(res.error);
+      else setScheduling(false);
+    });
+  }
 
   async function doCopy(key: string, text: string) {
     if (await copy(text)) {
@@ -97,6 +112,11 @@ export function PostCard({ post }: { post: Post }) {
           {ready ? "Validé" : "À relire"}
         </span>
       </header>
+      {post.scheduled_label && (
+        <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-brand">
+          <CalendarClock className="size-3.5" /> {post.publish_status === "published" ? "Publié" : post.scheduled_label}
+        </p>
+      )}
 
       {editing ? (
         <div className="mt-4 space-y-3">
@@ -154,10 +174,23 @@ export function PostCard({ post }: { post: Post }) {
           <button type="button" className="btn-ghost px-4 py-2" onClick={() => setEditing(true)}>
             <Pencil className="size-4" /> Modifier
           </button>
+          {ready && post.publish_status !== "published" && (
+            <button type="button" className="btn-ghost px-4 py-2" onClick={() => setScheduling((v) => !v)}>
+              <CalendarClock className="size-4" /> {post.scheduled_label ? "Déplacer" : "Programmer"}
+            </button>
+          )}
           <button type="button" className={`${ready ? "btn-ghost" : "btn-primary"} ml-auto px-4 py-2`} onClick={toggleStatus} disabled={pending}>
             {ready ? <RotateCcw className="size-4" /> : <Check className="size-4" />} {ready ? "Repasser en relecture" : "Valider"}
           </button>
         </footer>
+      )}
+      {scheduling && (
+        <div className="mt-3 flex flex-wrap items-end gap-2 rounded-xl bg-canvas p-3">
+          <input type="date" aria-label="Date" className="input w-auto py-2" value={when.day} onChange={(e) => setWhen({ ...when, day: e.target.value })} />
+          <input type="time" aria-label="Heure" className="input w-auto py-2" value={when.time} onChange={(e) => setWhen({ ...when, time: e.target.value })} />
+          <button type="button" className="btn-primary px-4 py-2" disabled={pending} onClick={doSchedule}>Programmer</button>
+          <span className="w-full text-xs text-ink-soft">Heure de Paris.</span>
+        </div>
       )}
       {error && <p role="alert" className="mt-3 text-sm text-danger">{error}</p>}
     </article>

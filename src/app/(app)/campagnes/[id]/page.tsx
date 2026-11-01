@@ -6,6 +6,7 @@ import { getUser } from "@/lib/supabase/server";
 import { OBJECTIVES } from "@/lib/campaigns/config";
 import { PostCard, type Post } from "./post-card";
 import { CampaignActions } from "./campaign-actions";
+import { fmt } from "@/lib/autopilot/time";
 
 export const metadata: Metadata = { title: "Campagne" };
 
@@ -26,14 +27,20 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       .maybeSingle(),
     supabase
       .from("posts")
-      .select("id, platform, format, title, caption, short_caption, call_to_action, hashtags, visual_idea, status, scheduled_for")
+      .select("id, platform, format, title, caption, short_caption, call_to_action, hashtags, visual_idea, status, scheduled_for, publish_status, scheduled_at")
       .eq("campaign_id", id)
       .order("scheduled_for")
       .order("created_at"),
   ]);
   if (!campaign) notFound();
 
-  const items = (posts ?? []) as (Post & { scheduled_for: string })[];
+  const items: Post[] = (posts ?? []).map((p) => ({
+    ...(p as unknown as Post),
+    scheduled_label:
+      p.scheduled_at && ["scheduled", "paused", "published"].includes(p.publish_status)
+        ? `${p.publish_status === "paused" ? "En pause · " : "Programmé "}${fmt.full(new Date(p.scheduled_at))}`
+        : null,
+  }));
   const byDay = new Map<string, typeof items>();
   for (const p of items) byDay.set(p.scheduled_for, [...(byDay.get(p.scheduled_for) ?? []), p]);
   const readyCount = items.filter((p) => p.status === "ready").length;
