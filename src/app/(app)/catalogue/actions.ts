@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { reportError } from "@/lib/observability";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
 import { AIError, isAIConfigured } from "@/lib/ai";
@@ -110,7 +111,7 @@ export async function generateProduct(_: FormState, formData: FormData): Promise
     gen = await generateProductDraft({ business, categories, sellerText: d.text, categoryId: d.categoryId, images });
   } catch (e) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
-    console.error("[generateProduct]", e);
+    await reportError("action", "generateProduct", e, { userId: user.id });
     return { error: e instanceof AIError ? AI_ERRORS[e.kind] : AI_ERRORS.invalid };
   }
 
@@ -147,7 +148,7 @@ export async function generateProduct(_: FormState, formData: FormData): Promise
 
   if (error || !product) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
-    console.error("[generateProduct] insert", error);
+    await reportError("action", "generateProduct.insert", error, { userId: user.id });
     return { error: "La fiche n'a pas pu être enregistrée. Aucun crédit n'a été utilisé." };
   }
 
@@ -309,7 +310,7 @@ export async function saveProduct(payload: SavePayload): Promise<Result> {
     .eq("id", d.id);
   if (error) {
     if (error.code === "23505") return { error: "Cette référence (SKU) est déjà utilisée par un autre produit." };
-    console.error("[saveProduct]", error);
+    await reportError("action", "saveProduct", error, { userId: user.id });
     return { error: "Enregistrement impossible. Réessayez." };
   }
 

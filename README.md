@@ -64,3 +64,9 @@ Les limites YouTube sont centralisées dans `src/lib/config/youtube.ts`, les for
 Activer un nouveau pays : suivre la liste de vérifications en tête de `src/config/markets.ts`
 (technique, commerciale, fiscale, réglementaire, traductions, prix et taxes en base) avant `active: true`.
 Les textes déjà migrés dans `src/i18n` : métadonnées, menu, statuts, offres ; les autres écrans suivent au fil des évolutions.
+
+## Qualité et suivi des erreurs
+
+- `npm test` : tests unitaires et tests des migrations SQL (Postgres embarqué, aucune connexion à la production).
+- `npm run check` : lint + types + tests. GitHub Actions lance aussi la compilation à chaque envoi sur `main`.
+- Les erreurs serveur, d'actions et du navigateur (utilisateurs connectés, 20 par heure maximum) sont enregistrées dans la table `app_errors` (Supabase), secrets masqués. Consultation : Supabase → Table Editor → `app_errors`.

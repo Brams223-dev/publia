@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { reportError } from "@/lib/observability";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
 import { AIError, isAIConfigured } from "@/lib/ai";
@@ -73,7 +74,7 @@ export async function createCampaign(_: GenerateState, formData: FormData): Prom
     p_key: key,
   });
   if (quotaError) {
-    console.error("[createCampaign] quota", quotaError);
+    await reportError("action", "createCampaign.quota", quotaError, { userId: user.id });
     return { error: "Vérification des crédits impossible. Réessayez." };
   }
   if (!quota?.ok) {
@@ -96,7 +97,7 @@ export async function createCampaign(_: GenerateState, formData: FormData): Prom
     });
   } catch (e) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
-    console.error("[createCampaign] génération", e);
+    await reportError("action", "createCampaign.generation", e, { userId: user.id });
     if (e instanceof AIError) return { error: AI_ERRORS[e.kind] };
     return { error: AI_ERRORS.invalid };
   }
@@ -124,7 +125,7 @@ export async function createCampaign(_: GenerateState, formData: FormData): Prom
 
   if (campaignError || !created) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
-    console.error("[createCampaign] enregistrement", campaignError);
+    await reportError("action", "createCampaign.enregistrement", campaignError, { userId: user.id });
     return { error: "La campagne n'a pas pu être enregistrée. Aucun crédit n'a été utilisé." };
   }
 
@@ -153,7 +154,7 @@ export async function createCampaign(_: GenerateState, formData: FormData): Prom
   if (postsError) {
     await supabase.from("campaigns").delete().eq("id", created.id);
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
-    console.error("[createCampaign] contenus", postsError);
+    await reportError("action", "createCampaign.contenus", postsError, { userId: user.id });
     return { error: "Les contenus n'ont pas pu être enregistrés. Aucun crédit n'a été utilisé." };
   }
 

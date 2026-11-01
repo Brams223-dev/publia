@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { reportError } from "@/lib/observability";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
 import { AIError, isAIConfigured } from "@/lib/ai";
@@ -93,7 +94,7 @@ export async function createAdCampaign(_: AdFormState, formData: FormData): Prom
     gen = await generateAdCreatives({ business, platform: d.platform, objective: d.objective, offer: d.offer, facts: d.facts });
   } catch (e) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
-    console.error("[createAdCampaign]", e);
+    await reportError("action", "createAdCampaign", e, { userId: user.id });
     return { error: e instanceof AIError ? AI_ERRORS[e.kind] : AI_ERRORS.invalid };
   }
 
@@ -122,7 +123,7 @@ export async function createAdCampaign(_: AdFormState, formData: FormData): Prom
 
   if (error || !campaign) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
-    console.error("[createAdCampaign] insert", error);
+    await reportError("action", "createAdCampaign.insert", error, { userId: user.id });
     return { error: "La campagne n'a pas pu être enregistrée. Aucun crédit n'a été utilisé." };
   }
 

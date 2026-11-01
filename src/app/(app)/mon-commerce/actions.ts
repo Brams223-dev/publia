@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { reportError } from "@/lib/observability";
 import { getCurrentBusiness } from "@/lib/business";
 import { SECTORS, TONES, MAX_PHOTOS } from "@/lib/config/business";
 
@@ -75,7 +76,7 @@ export async function saveBusiness(_: SaveState, formData: FormData): Promise<Sa
     : await supabase.from("businesses").insert({ ...row, owner_id: user.id });
 
   if (error) {
-    console.error("[saveBusiness]", error);
+    await reportError("action", "saveBusiness", error, { userId: user.id });
     return { error: "Enregistrement impossible pour le moment. Réessayez." };
   }
 
