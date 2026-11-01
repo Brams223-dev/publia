@@ -58,10 +58,10 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Studio",
     items: [
-      { href: "/studio", label: "Studio créatif", icon: Palette, ready: false },
+      { href: "/studio", label: "Studio créatif", icon: Palette, ready: true },
       { href: "/studio-video", label: "Studio vidéo", icon: Clapperboard, ready: false },
       { href: "/youtube", label: "YouTube Studio", icon: SquarePlay, ready: false },
-      { href: "/bibliotheque", label: "Bibliothèque", icon: FolderOpen, ready: false },
+      { href: "/bibliotheque", label: "Bibliothèque", icon: FolderOpen, ready: true },
     ],
   },
   {

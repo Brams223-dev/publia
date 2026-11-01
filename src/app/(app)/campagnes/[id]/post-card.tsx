@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CalendarClock, Check, Copy, Lightbulb, Pencil, RotateCcw } from "lucide-react";
+import { CalendarClock, Check, Copy, Lightbulb, Palette, Pencil, RotateCcw } from "lucide-react";
+import Link from "next/link";
 import { setPostStatus, updatePost } from "../actions";
 import { schedulePost } from "../../autopilot/actions";
 import { FORMAT_LABELS } from "@/lib/campaigns/config";
@@ -174,6 +175,9 @@ export function PostCard({ post }: { post: Post }) {
           <button type="button" className="btn-ghost px-4 py-2" onClick={() => setEditing(true)}>
             <Pencil className="size-4" /> Modifier
           </button>
+          <Link href={`/studio?post=${post.id}`} className="btn-ghost px-4 py-2">
+            <Palette className="size-4" /> {post.platform === "youtube" ? "Créer la miniature" : "Créer le visuel"}
+          </Link>
           {ready && post.publish_status !== "published" && (
             <button type="button" className="btn-ghost px-4 py-2" onClick={() => setScheduling((v) => !v)}>
               <CalendarClock className="size-4" /> {post.scheduled_label ? "Déplacer" : "Programmer"}

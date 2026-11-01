@@ -40,7 +40,7 @@ const PILLARS: Pillar[] = [
     name: "Studio",
     tagline: "Vos visuels, vidéos et contenus YouTube",
     icon: Palette,
-    modules: [{ label: "Studio créatif" }, { label: "Studio vidéo" }, { label: "YouTube Studio" }, { label: "Bibliothèque" }],
+    modules: [{ label: "Studio créatif", href: "/studio" }, { label: "Bibliothèque", href: "/bibliotheque" }, { label: "Studio vidéo" }, { label: "YouTube Studio" }],
   },
   {
     name: "Fashion",

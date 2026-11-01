@@ -10,7 +10,7 @@ Le studio marketing IA des commerces de proximité : publications, visuels, vid�
 | --- | --- | --- |
 | Fondations | Auth, profil intelligent du commerce, identité de marque, tableau de bord 4 piliers | Fait |
 | Fais ma communication | Campagne multi-réseaux générée par OpenAI, modifiable et validable | Fait (clés à configurer) |
-| Studio visuel + Bibliothèque | Modèles, export PNG/JPG | À faire |
+| Studio visuel + Bibliothèque | 12 modèles, 5 formats (dont miniature YouTube 1280×720), logo, couleurs, export PNG/JPG | Fait |
 | Assistant marketing | Assistant conversationnel, calendrier, packs métier | À faire |
 | Vidéo + YouTube Studio | Fournisseur vidéo réel, Shorts, miniatures | À faire |
 | Business | Avis Google, visibilité locale, contacts, fidélité, mini-site | À faire |

@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { SUPABASE_PUBLIC_KEY, SUPABASE_URL, isSupabaseConfigured } from "@/lib/supabase/env";
 
-const PROTECTED = ["/tableau-de-bord", "/fais-ma-communication", "/campagnes", "/autopilot", "/calendrier", "/comptes-sociaux", "/mon-commerce", "/abonnement", "/parametres"];
+const PROTECTED = ["/tableau-de-bord", "/fais-ma-communication", "/campagnes", "/autopilot", "/calendrier", "/comptes-sociaux", "/studio", "/bibliotheque", "/mon-commerce", "/abonnement", "/parametres"];
 const AUTH_PAGES = ["/connexion", "/inscription"];
 
 export async function proxy(request: NextRequest) {
