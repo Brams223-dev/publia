@@ -99,7 +99,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: L.groups.business,
     items: [
       { href: "/visibilite-locale", label: L.items.localVisibility, icon: MapPin, ready: false },
-      { href: "/avis", label: L.items.reviews, icon: Star, ready: false },
+      { href: "/avis", label: L.items.reviews, icon: Star, ready: true },
       { href: "/contacts", label: L.items.contacts, icon: Users, ready: true },
       { href: "/fidelite", label: L.items.loyalty, icon: Gift, ready: false },
       { href: "/inbox", label: L.items.inbox, icon: Inbox, ready: true },
