@@ -78,3 +78,8 @@ Les textes déjà migrés dans `src/i18n` : métadonnées, menu, statuts, offres
 - Le quota de générations est partagé par toute l'organisation (offre du propriétaire, en attendant les abonnements Stripe).
 - Invitations par lien (7 jours, usage unique, réservé à l'adresse invitée ; seule l'empreinte du jeton est stockée). L'envoi par e-mail arrivera avec les notifications.
 - Le commerce actif est mémorisé dans un cookie ; l'accès reste vérifié par la RLS.
+
+## Journal d'audit et limites de débit
+
+- Les actions sensibles (équipe, invitations, commerces, produits supprimés ou activés, conformité confirmée, campagnes et publicités supprimées) sont journalisées par des déclencheurs en base, dans `audit_log`. Lecture : propriétaire et administrateurs (page Organisation). Le journal n'est ni modifiable ni effaçable par les utilisateurs.
+- Limites par utilisateur (`src/lib/rate-limit.ts`) : IA 10/min, enregistrements 120/min, envois de fichiers 60/min, opérations d'équipe 30/h.

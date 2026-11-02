@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { reportError } from "@/lib/observability";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
 import { AIError, isAIConfigured } from "@/lib/ai";
@@ -68,6 +69,8 @@ export async function createAdCampaign(_: AdFormState, formData: FormData): Prom
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user) return { error: "Session expirée." };
   if (!business) return { error: "Renseignez d'abord votre commerce." };
+  const limited = await checkRateLimit(supabase, "ai");
+  if (limited) return { error: limited };
 
   if (d.creationId) {
     const { data: c } = await supabase.from("creations").select("id").eq("id", d.creationId).maybeSingle();
@@ -155,6 +158,8 @@ export async function updateVariant(input: z.input<typeof variantSchema>): Promi
   if (!p.success) return { error: "Champs invalides." };
   const { supabase, user } = await getCurrentBusiness();
   if (!user) return { error: "Session expirée." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
   const { id, ...fields } = p.data;
   const { data, error } = await supabase.from("ad_variants").update(fields).eq("id", id).select("ad_campaign_id").maybeSingle();
   if (error || !data) return { error: "Enregistrement impossible." };

@@ -190,3 +190,31 @@ test("départ d'un membre : accès retiré immédiatement", async () => {
   assert.deepEqual(await as(C, "select name from businesses"), []);
   assert.deepEqual(await as(C, "select name from products"), []);
 });
+
+// ---------------------------------------------------------------------------
+// Journal d'audit et limites de débit
+// ---------------------------------------------------------------------------
+test("journal d'audit : actions d'équipe et de commerce tracées, lecture réservée", async () => {
+  const org = await orgOf(bizA);
+  await as(A, `update businesses set city = 'Paris' where id = '${bizA}'`);
+  await as(A, `update businesses set name = 'A' where id = '${bizA}'`); // aucun changement : pas d'entrée
+  const rows = (await as<{ action: string; actor_id: string; details: Record<string, unknown> }>(A, `select action, actor_id, details from audit_log where organization_id = '${org}' order by id`)) as {
+    action: string; actor_id: string; details: Record<string, unknown>;
+  }[];
+  const actions = rows.map((r) => r.action);
+  for (const a of ["member.added", "business.created", "invitation.created", "invitation.accepted", "member.role_changed", "member.left", "business.updated"])
+    assert.ok(actions.includes(a), `${a} absent de ${actions.join(", ")}`);
+  assert.equal(actions.filter((a) => a === "business.updated").length, 1);
+  assert.deepEqual(rows.find((r) => r.action === "business.updated")!.details, { fields: ["city"] }, "noms des champs seulement");
+  assert.equal(rows.find((r) => r.action === "business.updated")!.actor_id, A);
+  assert.deepEqual(await as(B, `select action from audit_log where organization_id = '${org}'`), [], "un tiers ne lit rien");
+  assert.match(String(await as(A, `insert into audit_log (organization_id, action, target_type) values ('${org}', 'faux', 'x')`)), /ERREUR/);
+  assert.match(String(await as(A, "delete from audit_log")), /ERREUR/, "journal non effaçable");
+});
+
+test("limites de débit : par utilisateur, sans effet sur les autres", async () => {
+  const hit = async (uid: string) => ((await as<{ ok: boolean }>(uid, "select rate_limit_hit('test', 3, 60) ok")) as { ok: boolean }[])[0].ok;
+  assert.deepEqual([await hit(A), await hit(A), await hit(A), await hit(A)], [true, true, true, false]);
+  assert.equal(await hit(B), true);
+  assert.match(String(await as(A, "select * from rate_limits")), /ERREUR/);
+});

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { reportError } from "@/lib/observability";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
 import { AIError, isAIConfigured } from "@/lib/ai";
@@ -42,6 +43,8 @@ export async function createProduct(_: FormState, formData: FormData): Promise<F
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user) return { error: "Session expirée." };
   if (!business) return { error: "Renseignez d'abord votre commerce." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
 
   const cat = (await getCategories(supabase)).find((c) => c.id === parsed.data.categoryId);
   if (!cat) return { error: "Catégorie inconnue." };
@@ -83,6 +86,8 @@ export async function generateProduct(_: FormState, formData: FormData): Promise
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user) return { error: "Session expirée." };
   if (!business) return { error: "Renseignez d'abord votre commerce." };
+  const limited = await checkRateLimit(supabase, "ai");
+  if (limited) return { error: limited };
   if (d.paths.length > 4 || d.paths.some((p) => !ownsPath(p, business.id))) return { error: "Photos non autorisées." };
 
   const categories = await getCategories(supabase);
@@ -207,6 +212,8 @@ export async function saveProduct(payload: SavePayload): Promise<Result> {
 
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user || !business) return { error: "Session expirée." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
 
   const { data: existing } = await supabase
     .from("products")
@@ -345,6 +352,8 @@ async function ownedProduct(id: string) {
 export async function addProductMedia(productId: string, path: string): Promise<Result> {
   const { supabase, business, product } = await ownedProduct(productId);
   if (!business || !product) return { error: "Produit introuvable." };
+  const limited = await checkRateLimit(supabase, "upload");
+  if (limited) return { error: limited };
   if (!ownsPath(path, business.id)) return { error: "Fichier non autorisé." };
   const { count } = await supabase.from("product_media").select("id", { count: "exact", head: true }).eq("product_id", productId);
   if ((count ?? 0) >= LIMITS.mediaMax) {
@@ -396,6 +405,8 @@ export async function deleteProduct(productId: string): Promise<Result> {
 export async function duplicateProduct(productId: string): Promise<Result> {
   const { supabase, business, product } = await ownedProduct(productId);
   if (!business || !product) return { error: "Produit introuvable." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
   const { data: src } = await supabase.from("products").select("*").eq("id", productId).single();
   if (!src) return { error: "Produit introuvable." };
   const copy = { ...src } as Record<string, unknown>;
@@ -420,6 +431,8 @@ export async function createCollection(name: string): Promise<Result & { id?: st
   if (n.length < 1 || n.length > 120) return { error: "Nom de collection invalide (120 caractères maximum)." };
   const { supabase, business } = await getCurrentBusiness();
   if (!business) return { error: "Session expirée." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
   const { count } = await supabase.from("collections").select("id", { count: "exact", head: true }).eq("business_id", business.id);
   if ((count ?? 0) >= LIMITS.collectionsMax) return { error: `${LIMITS.collectionsMax} collections maximum.` };
   const { data: dup } = await supabase.from("collections").select("id").eq("business_id", business.id).ilike("name", n).maybeSingle();
@@ -451,6 +464,8 @@ export async function saveShop(_: FormState, formData: FormData): Promise<FormSt
   if (!parsed.success) return { error: "Modèle de boutique invalide." };
   const { supabase, business } = await getCurrentBusiness();
   if (!business) return { error: "Renseignez d'abord votre commerce." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
   const { error } = await supabase
     .from("shops")
     .upsert({ business_id: business.id, template: parsed.data.template, name: parsed.data.name || null }, { onConflict: "business_id" });

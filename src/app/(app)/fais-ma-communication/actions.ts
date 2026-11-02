@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { reportError } from "@/lib/observability";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getCurrentBusiness } from "@/lib/business";
 import { createAdminClient, isAdminConfigured } from "@/lib/supabase/admin";
 import { AIError, isAIConfigured } from "@/lib/ai";
@@ -63,6 +64,8 @@ export async function createCampaign(_: GenerateState, formData: FormData): Prom
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user) return { error: "Votre session a expiré. Reconnectez-vous." };
   if (!business) return { error: "Renseignez d'abord votre commerce dans « Mon commerce »." };
+  const limited = await checkRateLimit(supabase, "ai");
+  if (limited) return { error: limited };
 
   // 1. Réserve un crédit (contrôle serveur atomique, protégé contre les doubles envois).
   const admin = createAdminClient();

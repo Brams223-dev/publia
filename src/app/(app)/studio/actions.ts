@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getCurrentBusiness } from "@/lib/business";
 import { STUDIO_FORMATS } from "@/lib/studio/formats";
 import { TEMPLATES } from "@/lib/studio/render";
@@ -33,6 +34,8 @@ export async function saveCreation(input: z.input<typeof saveSchema>): Promise<{
   const d = parsed.data;
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user || !business) return { error: "Commerce introuvable." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
   if (!d.path.startsWith(`${business.id}/creations/`) || d.path.includes("..")) return { error: "Fichier non autorisé." };
   if (d.params.photoPath && !d.params.photoPath.startsWith(`${business.id}/`)) d.params.photoPath = null;
 

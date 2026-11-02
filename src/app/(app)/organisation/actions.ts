@@ -9,6 +9,7 @@ import { CURRENT_BUSINESS_COOKIE, canManage, getCurrentBusiness } from "@/lib/bu
 import { SECTORS } from "@/lib/config/business";
 import { SITE_URL } from "@/lib/supabase/env";
 import { reportError } from "@/lib/observability";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 type Result = { error?: string; ok?: boolean };
 export type InviteState = { error?: string; link?: string; email?: string } | undefined;
@@ -57,6 +58,8 @@ export async function createBusiness(_: FormState, formData: FormData): Promise<
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const { supabase, user, businesses } = await getCurrentBusiness();
   if (!user) return { error: "Session expirée." };
+  const limited = await checkRateLimit(supabase, "team");
+  if (limited) return { error: limited };
   const role = businesses.find((b) => b.organization_id === parsed.data.organizationId)?.role;
   if (!canManage(role)) return { error: "Seuls le propriétaire et les administrateurs peuvent ajouter un commerce." };
 
@@ -82,6 +85,8 @@ export async function renameOrganization(_: FormState, formData: FormData): Prom
   if (!name || name.length > 120) return { error: "Nom invalide (120 caractères maximum)." };
   const { supabase, business, role } = await getCurrentBusiness();
   if (!business || !canManage(role)) return { error: "Vous n'avez pas les droits pour cette action." };
+  const limited = await checkRateLimit(supabase, "team");
+  if (limited) return { error: limited };
   const { data, error } = await supabase.from("organizations").update({ name }).eq("id", business.organization_id).select("id");
   if (error || !data?.length) return { error: "Enregistrement impossible." };
   revalidatePath("/organisation");
@@ -103,6 +108,8 @@ export async function inviteMember(_: InviteState, formData: FormData): Promise<
   if (!user || !business) return { error: "Session expirée." };
   if (!canManage(role)) return { error: "Vous n'avez pas les droits pour inviter." };
   if (parsed.data.role === "admin" && role !== "owner") return { error: "Seul le propriétaire peut inviter un administrateur." };
+  const limited = await checkRateLimit(supabase, "team");
+  if (limited) return { error: limited };
 
   // Le jeton n'est montré qu'une fois ; seule son empreinte est stockée.
   const token = randomBytes(32).toString("base64url");
@@ -128,6 +135,8 @@ export async function revokeInvitation(id: string): Promise<Result> {
 export async function changeRole(userId: string, newRole: "admin" | "member"): Promise<Result> {
   const { supabase, business } = await getCurrentBusiness();
   if (!business) return { error: "Session expirée." };
+  const limited = await checkRateLimit(supabase, "team");
+  if (limited) return { error: limited };
   const { error } = await supabase.rpc("update_member_role", { p_org: business.organization_id, p_user: userId, p_role: newRole });
   if (error) return { error: teamError(error.message) };
   revalidatePath("/organisation");
@@ -137,6 +146,8 @@ export async function changeRole(userId: string, newRole: "admin" | "member"): P
 export async function removeMember(userId: string): Promise<Result> {
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user || !business) return { error: "Session expirée." };
+  const limited = await checkRateLimit(supabase, "team");
+  if (limited) return { error: limited };
   const { error } = await supabase.rpc("remove_member", { p_org: business.organization_id, p_user: userId });
   if (error) return { error: teamError(error.message) };
   if (userId === user.id) {

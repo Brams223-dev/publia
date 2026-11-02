@@ -5,6 +5,7 @@ import { z } from "zod";
 import { reportError } from "@/lib/observability";
 import { cookies } from "next/headers";
 import { CURRENT_BUSINESS_COOKIE, canManage, getCurrentBusiness } from "@/lib/business";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { SECTORS, TONES, MAX_PHOTOS } from "@/lib/config/business";
 
 export type SaveState = { error?: string; success?: string; fieldErrors?: Record<string, string> } | undefined;
@@ -66,6 +67,8 @@ export async function saveBusiness(_: SaveState, formData: FormData): Promise<Sa
   const { supabase, user, business, role } = await getCurrentBusiness();
   if (!user) return { error: "Votre session a expiré. Reconnectez-vous." };
   if (business && !canManage(role)) return { error: READ_ONLY };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
 
   const { primary, secondary, text, social_instagram, social_facebook, social_tiktok, social_youtube, ...rest } = parsed.data;
   const social_links = Object.fromEntries(
@@ -120,6 +123,8 @@ export async function setLogo(path: string): Promise<{ error?: string }> {
   const { supabase, user, business, role } = await getCurrentBusiness();
   if (!user || !business) return { error: "Commerce introuvable." };
   if (!canManage(role)) return { error: READ_ONLY };
+  const limited = await checkRateLimit(supabase, "upload");
+  if (limited) return { error: limited };
   if (!ownsPath(path, business.id)) return { error: "Fichier non autorisé." };
 
   const previous = business.logo_url;
@@ -145,6 +150,8 @@ export async function removeLogo(): Promise<{ error?: string }> {
 export async function addPhoto(path: string): Promise<{ error?: string }> {
   const { supabase, user, business } = await getCurrentBusiness();
   if (!user || !business) return { error: "Commerce introuvable." };
+  const limited = await checkRateLimit(supabase, "upload");
+  if (limited) return { error: limited };
   if (!ownsPath(path, business.id)) return { error: "Fichier non autorisé." };
 
   const { count } = await supabase

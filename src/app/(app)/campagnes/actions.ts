@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getUser } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { LIMITS } from "@/lib/campaigns/config";
 
 const postEdit = z.object({
@@ -32,6 +33,8 @@ export async function updatePost(input: z.input<typeof postEdit>): Promise<{ err
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const { supabase, user } = await getUser();
   if (!user) return { error: "Session expirée." };
+  const limited = await checkRateLimit(supabase, "write");
+  if (limited) return { error: limited };
   const { id, ...fields } = parsed.data;
   const { data, error } = await supabase.from("posts").update(fields).eq("id", id).select("campaign_id").maybeSingle();
   if (error || !data) return { error: "Enregistrement impossible." };
