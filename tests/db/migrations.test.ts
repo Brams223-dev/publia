@@ -241,3 +241,59 @@ test("coûts : calculés seulement avec un tarif saisi, jamais visibles par les 
   assert.match(String(await as(A, "select * from provider_usage_monthly")), /ERREUR/);
   assert.deepEqual(await as(A, "select is_app_admin() a"), [{ a: false }]);
 });
+
+// ---------------------------------------------------------------------------
+// Business : contacts, inbox, avis, fidélité
+// ---------------------------------------------------------------------------
+test("contacts : consentement daté obligatoire, isolation, unicité de l'e-mail", async () => {
+  assert.match(String(await as(A, `insert into contacts (business_id, first_name, marketing_consent) values ('${bizA}', 'Léa', true)`)), /ERREUR/, "consentement sans date refusé");
+  const ok = await as(A, `insert into contacts (business_id, first_name, email, marketing_consent, consent_at, consent_source) values ('${bizA}', 'Léa', 'lea@x.fr', true, now(), 'comptoir') returning first_name`);
+  assert.deepEqual(ok, [{ first_name: "Léa" }]);
+  assert.match(String(await as(A, `insert into contacts (business_id, first_name, email) values ('${bizA}', 'Doublon', 'LEA@x.fr')`)), /ERREUR/);
+  assert.deepEqual(await as(B, "select first_name from contacts"), []);
+  assert.match(String(await as(B, `insert into contacts (business_id, first_name) values ('${bizA}', 'Pirate')`)), /ERREUR/);
+});
+
+test("inbox et avis : création réservée au serveur, note du client non modifiable", async () => {
+  assert.match(String(await as(A, `insert into inbox_messages (business_id, name, email, body) values ('${bizA}', 'X', 'x@x.fr', 'Bonjour')`)), /ERREUR/);
+  assert.match(String(await as(A, `insert into reviews (business_id, author_name, rating) values ('${bizA}', 'Faux avis', 5)`)), /ERREUR/, "le commerçant ne peut pas écrire d'avis");
+  const r = (await one<{ id: string }>(`insert into reviews (business_id, author_name, rating, comment) values ('${bizA}', 'Client', 2, 'Moyen') returning id`)).id;
+  assert.match(String(await as(A, `update reviews set rating = 5 where id = '${r}'`)), /ERREUR/, "note non modifiable");
+  assert.match(String(await as(A, `update reviews set comment = 'Super' where id = '${r}'`)), /ERREUR/, "texte non modifiable");
+  assert.deepEqual(await as(A, `update reviews set status = 'published', reply = 'Merci', replied_at = now() where id = '${r}' returning status`), [{ status: "published" }]);
+  assert.deepEqual(await as(B, "select id from reviews"), []);
+  const orgA = await orgOf(bizA);
+  assert.ok(((await as<{ action: string }>(A, `select action from audit_log where organization_id = '${orgA}' and action = 'review.published'`)) as unknown[]).length === 1);
+});
+
+test("fidélité : soldes modifiés uniquement par loyalty_apply, avec historique", async () => {
+  const contact = (await as<{ id: string }>(A, `insert into contacts (business_id, first_name) values ('${bizA}', 'Max') returning id`)) as { id: string }[];
+  await as(A, `insert into loyalty_programs (business_id, kind, stamps_required, reward_label) values ('${bizA}', 'stamps', 3, 'Un café offert')`);
+  const card = ((await as<{ id: string }>(A, `select loyalty_create_card('${contact[0].id}') id`)) as { id: string }[])[0].id;
+  assert.match(String(await as(B, `select loyalty_apply('${card}', 'earn', 1, null, null)`)), /forbidden/);
+  assert.match(String(await as(A, `update loyalty_cards set balance = 99 where id = '${card}'`)), /ERREUR/);
+  for (let i = 0; i < 2; i++) await as(A, `select loyalty_apply('${card}', 'earn', 1, null, null)`);
+  assert.match(String(await as(A, `select loyalty_apply('${card}', 'redeem', null, null, null)`)), /insufficient_balance/);
+  await as(A, `select loyalty_apply('${card}', 'earn', 1, null, null)`);
+  const after = (await as<{ r: { balance: number; rewards_redeemed: number } }>(A, `select loyalty_apply('${card}', 'redeem', null, null, null) r`)) as { r: { balance: number; rewards_redeemed: number } }[];
+  assert.deepEqual(after[0].r, { balance: 0, total_earned: 3, rewards_redeemed: 1 });
+  assert.match(String(await as(A, `select loyalty_apply('${card}', 'adjust', 2, null, '')`)), /note_required/);
+  const events = (await as<{ kind: string; amount: number }>(A, `select kind, amount from loyalty_events where card_id = '${card}' order by id`)) as { kind: string; amount: number }[];
+  assert.deepEqual(events.map((e) => `${e.kind}${e.amount}`), ["earn1", "earn1", "earn1", "redeem-3"]);
+  // Points : 1 point par euro, arrondi à l'inférieur.
+  await as(A, `update loyalty_programs set kind = 'points', points_per_euro = 1, reward_threshold = 50 where business_id = '${bizA}'`);
+  const pts = (await as<{ r: { balance: number } }>(A, `select loyalty_apply('${card}', 'earn', null, 1999, null) r`)) as { r: { balance: number } }[];
+  assert.equal(pts[0].r.balance, 19);
+});
+
+test("limites publiques : réservées au serveur", async () => {
+  assert.match(String(await as(A, "select public_rate_limit_hit('ip:x', 5, 60)")), /ERREUR/);
+  assert.equal((await one<{ ok: boolean }>("select public_rate_limit_hit('ip:x', 1, 60) ok")).ok, true);
+  assert.equal((await one<{ ok: boolean }>("select public_rate_limit_hit('ip:x', 1, 60) ok")).ok, false);
+});
+
+test("avis : le commerçant ne peut pas supprimer un avis", async () => {
+  const r = (await one<{ id: string }>(`insert into reviews (business_id, author_name, rating) values ('${bizA}', 'Client 2', 1) returning id`)).id;
+  assert.match(String(await as(A, `delete from reviews where id = '${r}'`)), /ERREUR/);
+  assert.equal((await one<{ n: number }>(`select count(*)::int n from reviews where id = '${r}'`)).n, 1);
+});

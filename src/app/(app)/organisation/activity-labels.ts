@@ -33,6 +33,13 @@ export function describe(e: { action: string; details: Record<string, unknown> }
     case "ad_campaign.deleted": return `Campagne publicitaire « ${s(d.name)} » supprimée`;
     case "ad_campaign.status": return `Campagne publicitaire « ${s(d.name)} » : ${s(d.from)} → ${s(d.to)}`;
     case "campaign.deleted": return `Campagne « ${s(d.title) || "sans titre"} » supprimée`;
+    case "contact.deleted": return `Contact « ${s(d.name) || "sans nom"} » supprimé`;
+    case "review.published": return `Avis de ${s(d.author)} (${String(d.rating ?? "")}/5) publié`;
+    case "review.hidden": return `Avis de ${s(d.author)} (${String(d.rating ?? "")}/5) masqué`;
+    case "review.pending": return `Avis de ${s(d.author)} remis en attente`;
+    case "review.deleted": return `Avis de ${s(d.author)} supprimé`;
+    case "minisite.published": return "Mini-site mis en ligne";
+    case "minisite.unpublished": return "Mini-site retiré de la publication";
     default: return e.action;
   }
 }

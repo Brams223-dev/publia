@@ -4,10 +4,10 @@ import fs from "node:fs";
 import { describe } from "@/app/(app)/organisation/activity-labels";
 
 test("chaque action journalisée en base a un libellé lisible", () => {
-  const sql = fs.readFileSync("supabase/migrations/20261101000013_audit_rate_limits.sql", "utf8");
+  const sql = ["20261101000013_audit_rate_limits.sql", "20261101000015_business_modules.sql"].map((f) => fs.readFileSync(`supabase/migrations/${f}`, "utf8")).join("\n");
   const actions = new Set([...sql.matchAll(/'([a-z_]+\.[a-z_]+)'/g)].map((m) => m[1]));
-  actions.add("product.activated").add("product.archived"); // construites dynamiquement
-  actions.delete("product.");
+  for (const a of ["product.activated", "product.archived", "review.published", "review.hidden", "review.pending", "minisite.published", "minisite.unpublished"]) actions.add(a); // construites dynamiquement
+  for (const a of ["product.", "review."]) actions.delete(a);
   assert.ok(actions.size >= 15, `actions trouvées : ${[...actions].join(", ")}`);
   for (const a of actions) assert.notEqual(describe({ action: a, details: {} }), a, `libellé manquant pour ${a}`);
 });
