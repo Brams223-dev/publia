@@ -90,3 +90,12 @@ Les textes déjà migrés dans `src/i18n` : métadonnées, menu, statuts, offres
 - Catégories séparées : consommation IA, frais de paiement, budget publicitaire, livraison, noms de domaine, autres. L'abonnement Publia est suivi à part.
 - Le coût n'est calculé qu'à partir des tarifs saisis dans `provider_prices` (prix par unité en millionièmes, avec la page source) : aucun prix n'est supposé.
 - Synthèse mensuelle : page interne `/admin/couts`, réservée aux comptes de la table `app_admins`.
+
+## Publia Business (sans compte externe)
+
+- **Contacts** : fiches clients, étiquettes, consentement marketing daté avec sa provenance (RGPD), import/export CSV compatible Excel, suppression sur demande.
+- **Mini-site** : page publique `/b/<adresse>` (infos, horaires, itinéraire, produits actifs, avis, formulaire de contact protégé : piège à robots + limites par visiteur), données structurées pour le référencement local.
+- **Inbox** : messages reçus via le mini-site, liés automatiquement aux contacts. Réponse par la messagerie du commerçant en attendant le service d'e-mails.
+- **Avis clients** : dépôt public, modération tracée, réponses publiques. Le commerçant ne peut ni écrire, ni modifier, ni supprimer un avis ; pas de filtrage selon la note (mention légale affichée).
+- **Fidélité** : tampons ou points, inscription en caisse, récompenses, ajustements motivés, historique, carte consultable par le client via un lien personnel révocable.
+- **Visibilité locale** : score et actions prioritaires calculés sur les données réelles, liste de vérification de la fiche Google (déclarative, sans API), bloc de coordonnées à recopier.

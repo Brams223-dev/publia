@@ -64,7 +64,14 @@ const PILLARS: Pillar[] = [
     name: "Business",
     tagline: "Attirer, fidéliser, répondre",
     icon: Briefcase,
-    modules: [{ label: "Avis clients" }, { label: "Visibilité locale" }, { label: "Contacts" }, { label: "Fidélité" }, { label: "Mini-site" }],
+    modules: [
+      { label: "Avis clients", href: "/avis" },
+      { label: "Visibilité locale", href: "/visibilite-locale" },
+      { label: "Contacts", href: "/contacts" },
+      { label: "Fidélité", href: "/fidelite" },
+      { label: "Mini-site", href: "/mini-site" },
+      { label: "Inbox", href: "/inbox" },
+    ],
   },
   {
     name: "Intelligence",
