@@ -101,7 +101,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/visibilite-locale", label: L.items.localVisibility, icon: MapPin, ready: false },
       { href: "/avis", label: L.items.reviews, icon: Star, ready: true },
       { href: "/contacts", label: L.items.contacts, icon: Users, ready: true },
-      { href: "/fidelite", label: L.items.loyalty, icon: Gift, ready: false },
+      { href: "/fidelite", label: L.items.loyalty, icon: Gift, ready: true },
       { href: "/inbox", label: L.items.inbox, icon: Inbox, ready: true },
       { href: "/mini-site", label: L.items.miniSite, icon: Globe, ready: true },
     ],
