@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { Coins, LogOut } from "lucide-react";
 import { NAV, NAV_GROUPS } from "./nav";
 import { Logo } from "@/components/logo";
 import { signOut } from "../(auth)/actions";
@@ -11,7 +11,7 @@ import { BusinessSwitcher } from "./business-switcher";
 
 type Switcher = { currentId: string | null; businesses: { id: string; name: string; organization: string }[] };
 
-export function Sidebar({ switcher }: { switcher: Switcher }) {
+export function Sidebar({ switcher, isAdmin = false }: { switcher: Switcher; isAdmin?: boolean }) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -58,6 +58,11 @@ export function Sidebar({ switcher }: { switcher: Switcher }) {
             </div>
           ))}
         </nav>
+        {isAdmin ? (
+          <Link href="/admin/couts" className="mx-4 mb-2 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-ink-soft hover:bg-canvas hover:text-ink">
+            <Coins className="size-4" /> Coûts fournisseurs (admin)
+          </Link>
+        ) : null}
         <form action={signOut} className="border-t border-line p-4">
           <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-ink-soft hover:bg-canvas hover:text-ink">
             <LogOut className="size-4" /> {messages.common.signOut}

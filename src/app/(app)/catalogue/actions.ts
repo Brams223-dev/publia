@@ -113,7 +113,7 @@ export async function generateProduct(_: FormState, formData: FormData): Promise
 
   let gen: Awaited<ReturnType<typeof generateProductDraft>>;
   try {
-    gen = await generateProductDraft({ business, categories, sellerText: d.text, categoryId: d.categoryId, images });
+    gen = await generateProductDraft({ business, userId: user.id, categories, sellerText: d.text, categoryId: d.categoryId, images });
   } catch (e) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
     await reportError("action", "generateProduct", e, { userId: user.id });

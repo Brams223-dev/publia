@@ -83,3 +83,10 @@ Les textes déjà migrés dans `src/i18n` : métadonnées, menu, statuts, offres
 
 - Les actions sensibles (équipe, invitations, commerces, produits supprimés ou activés, conformité confirmée, campagnes et publicités supprimées) sont journalisées par des déclencheurs en base, dans `audit_log`. Lecture : propriétaire et administrateurs (page Organisation). Le journal n'est ni modifiable ni effaçable par les utilisateurs.
 - Limites par utilisateur (`src/lib/rate-limit.ts`) : IA 10/min, enregistrements 120/min, envois de fichiers 60/min, opérations d'équipe 30/h.
+
+## Coûts réels des fournisseurs
+
+- Chaque appel IA enregistre dans `provider_usage` les jetons réellement facturés (y compris les échecs facturés), le modèle, l'opération, l'organisation et l'utilisateur.
+- Catégories séparées : consommation IA, frais de paiement, budget publicitaire, livraison, noms de domaine, autres. L'abonnement Publia est suivi à part.
+- Le coût n'est calculé qu'à partir des tarifs saisis dans `provider_prices` (prix par unité en millionièmes, avec la page source) : aucun prix n'est supposé.
+- Synthèse mensuelle : page interne `/admin/couts`, réservée aux comptes de la table `app_admins`.

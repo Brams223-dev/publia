@@ -157,12 +157,13 @@ function normalizeHashtags(tags: string[], platform: CampaignPlatform, format: s
   return Array.from(new Set(clean)).slice(0, LIMITS.hashtagsMax);
 }
 
-export async function generateCampaign(args: Parameters<typeof buildCampaignInput>[0]) {
+export async function generateCampaign(args: Parameters<typeof buildCampaignInput>[0] & { userId?: string }) {
   const { data, model } = await generateStructured<unknown>({
     instructions: INSTRUCTIONS,
     input: buildCampaignInput(args),
     schemaName: "campagne_publia",
     schema: CAMPAIGN_JSON_SCHEMA as unknown as Record<string, unknown>,
+    meter: { operation: "generate_campaign", businessId: args.business.id, userId: args.userId },
   });
 
   const parsed = campaignSchema.parse(data);

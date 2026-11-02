@@ -84,7 +84,9 @@ export async function generateAdCreatives({
   objective,
   offer,
   facts,
+  userId,
 }: {
+  userId?: string;
   business: Business;
   platform: AdPlatform;
   objective: AdObjective;
@@ -124,6 +126,7 @@ export async function generateAdCreatives({
     input,
     schemaName: "publia_ads",
     schema: ADS_JSON_SCHEMA as unknown as Record<string, unknown>,
+    meter: { operation: "generate_ads", businessId: business.id, userId },
   });
   return { ...sanitize(resultSchema.parse(data), platform), model };
 }

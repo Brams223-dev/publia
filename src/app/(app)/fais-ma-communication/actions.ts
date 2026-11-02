@@ -91,6 +91,7 @@ export async function createCampaign(_: GenerateState, formData: FormData): Prom
   let result: Awaited<ReturnType<typeof generateCampaign>>;
   try {
     result = await generateCampaign({
+      userId: user.id,
       business,
       objective: input.objective as never,
       brief: input.brief,

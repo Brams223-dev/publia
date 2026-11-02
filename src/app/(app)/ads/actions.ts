@@ -94,7 +94,7 @@ export async function createAdCampaign(_: AdFormState, formData: FormData): Prom
 
   let gen: Awaited<ReturnType<typeof generateAdCreatives>>;
   try {
-    gen = await generateAdCreatives({ business, platform: d.platform, objective: d.objective, offer: d.offer, facts: d.facts });
+    gen = await generateAdCreatives({ business, userId: user.id, platform: d.platform, objective: d.objective, offer: d.offer, facts: d.facts });
   } catch (e) {
     await admin.rpc("refund_generation", { p_user: user.id, p_key: key });
     await reportError("action", "createAdCampaign", e, { userId: user.id });

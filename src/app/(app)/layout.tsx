@@ -7,11 +7,13 @@ import { getCurrentBusiness } from "@/lib/business";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  let isAdmin = false;
   let switcher: { currentId: string | null; businesses: { id: string; name: string; organization: string }[] } = { currentId: null, businesses: [] };
 
   if (isSupabaseConfigured()) {
-    const { user, business, businesses } = await getCurrentBusiness();
+    const { supabase, user, business, businesses } = await getCurrentBusiness();
     if (!user) redirect("/connexion");
+    isAdmin = Boolean((await supabase.rpc("is_app_admin")).data);
     switcher = {
       currentId: business?.id ?? null,
       businesses: businesses.map((b) => ({ id: b.id, name: b.name, organization: b.organization_name })),
@@ -20,7 +22,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="md:flex">
-      <Sidebar switcher={switcher} />
+      <Sidebar switcher={switcher} isAdmin={isAdmin} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-28 sm:px-8 sm:py-10">
         <ConfigNotice />
         {children}

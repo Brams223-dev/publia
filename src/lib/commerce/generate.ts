@@ -28,11 +28,13 @@ RÈGLES ABSOLUES
 
 export async function generateProductDraft({
   business,
+  userId,
   categories,
   sellerText,
   categoryId,
   images,
 }: {
+  userId?: string;
   business: Business;
   categories: Category[];
   sellerText: string;
@@ -83,6 +85,7 @@ export async function generateProductDraft({
     schemaName: "publia_fiche_produit",
     schema: schema as unknown as Record<string, unknown>,
     images,
+    meter: { operation: "generate_product", businessId: business.id, userId },
   });
 
   return { ...finalizeProductDraft(data, { categories, sellerText, chosenCategoryId: categoryId, hasImages: images.length > 0 }), model };

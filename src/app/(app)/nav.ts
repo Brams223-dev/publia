@@ -116,7 +116,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/mon-commerce", label: L.items.business, icon: Store, ready: true, mobile: L.mobile.business },
       { href: "/organisation", label: L.items.organization, icon: Building2, ready: true },
       { href: "/abonnement", label: L.items.subscription, icon: CreditCard, ready: false },
-      { href: "/parametres", label: L.items.settings, icon: Settings, ready: false },
+      { href: "/parametres", label: L.items.settings, icon: Settings, ready: true },
     ],
   },
 ];

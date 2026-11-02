@@ -8,14 +8,26 @@ export const OPENAI_MODEL = (process.env.OPENAI_MODEL ?? "gpt-6.1-terra").trim()
 
 export const isAIConfigured = () => Boolean(API_KEY);
 
+export type AIUsage = { inputTokens: number; cachedInputTokens: number; outputTokens: number };
+
 export class AIError extends Error {
   constructor(
     message: string,
     public readonly kind: "config" | "timeout" | "refusal" | "rate_limit" | "upstream" | "invalid",
+    /** Unités facturées malgré l'échec (réponse reçue mais inexploitable). */
+    public readonly usage?: AIUsage,
+    public readonly model?: string,
   ) {
     super(message);
   }
 }
+
+type RawUsage = { input_tokens?: number; output_tokens?: number; input_tokens_details?: { cached_tokens?: number } };
+const toUsage = (u: RawUsage | undefined): AIUsage => ({
+  inputTokens: Math.max(0, Number(u?.input_tokens ?? 0)),
+  cachedInputTokens: Math.max(0, Number(u?.input_tokens_details?.cached_tokens ?? 0)),
+  outputTokens: Math.max(0, Number(u?.output_tokens ?? 0)),
+});
 
 type OutputItem = { type: string; content?: { type: string; text?: string; refusal?: string }[] };
 
@@ -33,7 +45,7 @@ export async function generateStructured<T>({
   schema: Record<string, unknown>;
   images?: string[];
   timeoutMs?: number;
-}): Promise<{ data: T; model: string }> {
+}): Promise<{ data: T; model: string; usage: AIUsage; requestId: string | null }> {
   if (!isAIConfigured()) throw new AIError("OPENAI_API_KEY manquante", "config");
 
   let res: Response;
@@ -74,18 +86,20 @@ export async function generateStructured<T>({
     throw new AIError(`Erreur OpenAI ${res.status}`, "upstream");
   }
 
-  const json = (await res.json()) as { model?: string; output?: OutputItem[]; status?: string };
+  const json = (await res.json()) as { id?: string; model?: string; output?: OutputItem[]; status?: string; usage?: RawUsage };
+  const usage = toUsage(json.usage);
+  const model = json.model ?? OPENAI_MODEL;
   const parts = (json.output ?? []).filter((o) => o.type === "message").flatMap((o) => o.content ?? []);
-  if (parts.some((p) => p.type === "refusal")) throw new AIError("Demande refusée par le modèle", "refusal");
+  if (parts.some((p) => p.type === "refusal")) throw new AIError("Demande refusée par le modèle", "refusal", usage, model);
   const text = parts
     .filter((p) => p.type === "output_text")
     .map((p) => p.text ?? "")
     .join("");
-  if (!text) throw new AIError("Réponse vide", "invalid");
+  if (!text) throw new AIError("Réponse vide", "invalid", usage, model);
 
   try {
-    return { data: JSON.parse(text) as T, model: json.model ?? OPENAI_MODEL };
+    return { data: JSON.parse(text) as T, model, usage, requestId: json.id ?? null };
   } catch {
-    throw new AIError("Réponse illisible", "invalid");
+    throw new AIError("Réponse illisible", "invalid", usage, model);
   }
 }

@@ -218,3 +218,26 @@ test("limites de débit : par utilisateur, sans effet sur les autres", async () 
   assert.equal(await hit(B), true);
   assert.match(String(await as(A, "select * from rate_limits")), /ERREUR/);
 });
+
+// ---------------------------------------------------------------------------
+// Coûts réels des fournisseurs
+// ---------------------------------------------------------------------------
+test("coûts : calculés seulement avec un tarif saisi, jamais visibles par les utilisateurs", async () => {
+  await db.exec(`insert into provider_usage (provider, model, operation, input_tokens, cached_input_tokens, output_tokens) values
+    ('openai', 'modele-a', 'generate_post', 1000000, 200000, 100000),
+    ('openai', 'modele-b', 'generate_post', 1000, 0, 1000)`);
+  await db.exec(`insert into provider_prices (provider, model, unit, price_micros, valid_from) values
+    ('openai', 'modele-a', 'input_token', 2, '2026-01-01'),
+    ('openai', 'modele-a', 'cached_input_token', 0.5, '2026-01-01'),
+    ('openai', 'modele-a', 'output_token', 8, '2026-01-01')`);
+  const rows = (await db.query<{ model: string; computed_cost: string | null; unpriced_calls: string }>(
+    "select model, computed_cost::text, unpriced_calls::text from provider_usage_monthly order by model")).rows;
+  // 800 000 × 2 + 200 000 × 0,5 + 100 000 × 8 = 2 500 000 micro-unités = 2,50
+  assert.equal(Number(rows[0].computed_cost), 2.5);
+  assert.equal(rows[1].computed_cost, null, "aucun tarif : pas de coût inventé");
+  assert.equal(rows[1].unpriced_calls, "1");
+  assert.match(String(await as(A, "select * from provider_usage")), /ERREUR/);
+  assert.match(String(await as(A, "select * from provider_prices")), /ERREUR/);
+  assert.match(String(await as(A, "select * from provider_usage_monthly")), /ERREUR/);
+  assert.deepEqual(await as(A, "select is_app_admin() a"), [{ a: false }]);
+});
